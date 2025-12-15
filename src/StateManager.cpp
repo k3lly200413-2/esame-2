@@ -25,7 +25,8 @@ void StateManager::init()
 
 void StateManager::update()
 {
-
+  // currentState;
+  return;
 }
 
 void StateManager::setState(State newState)
