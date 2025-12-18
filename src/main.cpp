@@ -3,6 +3,7 @@
 #include<LiquidCrystal_I2C.h>
 #include "GenericState.h"
 #include "DroneInsideState.h"
+#include "TakeOffState.h"
 
 // DO NOT USE SEMICOLONS THEY BECOME PART OF THE MACRO 
 // E.G. Don't do:
@@ -30,6 +31,8 @@ int ledPin = 13;
 
 LiquidCrystal_I2C lcd(I2C_ADDRESS, 16, 2);
 
+GenericState* initialState;
+
 void setup()
 {
     myServo.attach(SERVO_PIN);
@@ -45,7 +48,14 @@ void setup()
     pinMode(4, OUTPUT);
     pinMode(5, OUTPUT);
 
-    GenericState* initialState = new DroneInsideState(ledPins, myServo, lcd);
+    initialState = new TakeOffState(ledPins, myServo, lcd);
     // StateManager* stateManager = new StateManager(initialState);
     initialState->enterState();
+}
+
+void loop()
+{
+    // Serial.println("We're Looping");
+
+    initialState->update();
 }

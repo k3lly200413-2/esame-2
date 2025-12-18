@@ -8,7 +8,7 @@ TakeOffState::TakeOffState(
 : GenericState(leds, servo, lcd)
 {
     initialTime = 0;
-    T1 = 60000;
+    T1 = 10000;
 }
 
 TakeOffState::~TakeOffState()
@@ -35,17 +35,22 @@ void TakeOffState::update()
 {
     if (1 /*Some distance*/)
     {
+        // Serial.println("Update");
         if(initialTime == 0)
         {
             initialTime = millis();
+            currentTime = initialTime;
         }
         else
         {
-            if (millis() - initialTime >= T1)
+          Serial.println(currentTime);
+            if (currentTime - initialTime >= T1)
             {
+                Serial.println("Time Passed => " + millis() - initialTime);
                 closeMotor();
                 writeOnDisplay(0, 0, "DRONE OUT");
             }
+            currentTime = millis();
         }
     }
 }
