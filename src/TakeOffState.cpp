@@ -3,12 +3,15 @@
 TakeOffState::TakeOffState(
     int leds[3],
     Servo &servo,
-    LiquidCrystal_I2C &lcd
+    LiquidCrystal_I2C &lcd,
+    int pin_echo,
+    int pin_trig
 )
-: GenericState(leds, servo, lcd)
+: GenericState(leds, servo, lcd, pin_echo, pin_trig)
 {
     initialTime = 0;
     T1 = 10000;
+    D1 = 30;
 }
 
 TakeOffState::~TakeOffState()
@@ -33,7 +36,8 @@ void TakeOffState::enterState()
 
 void TakeOffState::update()
 {
-    if (1 /*Some distance*/)
+    // TODO: Fix this because still wrong
+    if (getDistance() >= D1)
     {
         // Serial.println("Update");
         if(initialTime == 0)

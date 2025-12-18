@@ -9,7 +9,7 @@
 class DroneInsideState : public GenericState
 {
     public:
-    DroneInsideState(int leds[3], Servo &servo, LiquidCrystal_I2C &lcd);
+    DroneInsideState(int leds[3], Servo &servo, LiquidCrystal_I2C &lcd, int pin_echo, int pin_trig);
 
     ~DroneInsideState();
     void enterState() override;

@@ -48,7 +48,7 @@ void setup()
     pinMode(4, OUTPUT);
     pinMode(5, OUTPUT);
 
-    initialState = new TakeOffState(ledPins, myServo, lcd);
+    initialState = new TakeOffState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG);
     // StateManager* stateManager = new StateManager(initialState);
     initialState->enterState();
 }

@@ -11,6 +11,8 @@ class GenericState
         int ledPins[3];
         LiquidCrystal_I2C &lcd;
         Servo &servoUsed;
+        int trig_pin;
+        int echo_pin;
 
         void writeOnDisplay(int cursorX, int cursorY, char *text);
         
@@ -45,11 +47,15 @@ class GenericState
         //     }
         // }
 
+        int getDistance();
+
     public:
         GenericState(
             int leds[3],
             Servo &servo,
-            LiquidCrystal_I2C &lcdRef
+            LiquidCrystal_I2C &lcdRef,
+            int pin_echo,
+            int pin_trig
         );
         // : servoUsed(servo), lcd(lcdRef) // Initializer list is required for References
         // {
