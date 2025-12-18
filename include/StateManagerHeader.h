@@ -2,15 +2,15 @@
 #define STATE_MANAGER_H
 
 #include <Arduino.h>
-
-enum State {
-  INSIDE,
-  OUTSIDE
-};
+#include "GenericState.h"
 
 class StateManager {
   private:
-    State currentState;
+
+    /**
+     * Need to put a pointer instead of a instance of a class becasue if I put the instance of it memory gets allocated only to that one variable 
+    */
+    GenericState* currentState;
     int servoPin;
     int pirPin;
     int ledPins[3];
@@ -20,6 +20,7 @@ class StateManager {
   
   public:
     StateManager(
+      GenericState* startingState,
       int servoPin, 
       int pirPin, 
       int ledPins[3],
@@ -31,7 +32,7 @@ class StateManager {
 
     void update();
 
-    void setState(State newState);
+    void setState(GenericState* newState);
 };
 
 #endif

@@ -1,6 +1,8 @@
 #include "StateManagerHeader.h"
+#include "GenericState.h"
 
 StateManager::StateManager(
+  GenericState* startingState,
   int servo,
   int pir,
   int leds[3],
@@ -8,6 +10,9 @@ StateManager::StateManager(
   int tempSensor,
   int sonar)
 {
+
+  currentState = startingState;
+
   servoPin = servo;
   pirPin = pir;
   ledPins[0] = leds[0];
@@ -20,16 +25,37 @@ StateManager::StateManager(
 
 void StateManager::init()
 {
-  // TODO: I don't know what I have to do yet here
+  pinMode(pirPin, INPUT);
+  pinMode(buttonPin, INPUT);
+  pinMode(tempSensorPin, INPUT);
+  pinMode(sonarPin, INPUT);
+
+  for (int i=0; i < 3; i++)
+  {
+    pinMode(ledPins[i], OUTPUT);
+  }
+
+  if (currentState != nullptr)
+  {
+    currentState->enterState();
+  }
+
 }
 
 void StateManager::update()
 {
-  // currentState;
-  return;
+  if (currentState != nullptr)
+  {
+    currentState->update();
+  }
 }
 
-void StateManager::setState(State newState)
+void StateManager::setState(GenericState* newState)
 {
-  this->currentState = newState;
+  if (currentState != nullptr)
+  {
+    currentState->exitState();
+    currentState = newState;
+    currentState->enterState();
+  }
 }

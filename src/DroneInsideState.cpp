@@ -1,7 +1,4 @@
-#include "GenericState.h"
-#include<Arduino.h>
-#include<LiquidCrystal_I2C.h>
-#include<Servo.h>
+#include "DroneInsideState.h"
 
 /*
 Available functions not declaired:
@@ -11,26 +8,23 @@ Available functions not declaired:
 */
 
 
-GenericState::GenericState(
+DroneInsideState::DroneInsideState(
     int leds[3],
     Servo &servo,
-    LiquidCrystal_I2C &lcdDisplay
+    LiquidCrystal_I2C &lcd
 )
 
-    // Understand why this is here, apparently because of the & so that we don't create a copy when passing the reference
-    : lcd(lcdDisplay), servoUsed(servo)
+    // : is a list of constructors, used to construct the variables before the constructor of the class in question
+    // lcd is a pointer, because of this we need to pass an initialised version of the class ( I think ) so we need to understand when we need to initialise the first pointer to the liquidcristali2c class
+    : GenericState(leds, servo, lcd)
 {
-    ledPins[0] = leds[0];
-    ledPins[1] = leds[1];
-    ledPins[2] = leds[2];
-
-    for(int i=0; i<3; i++) {
-        pinMode(ledPins[i], OUTPUT);
-    }
-
 }
 
-void GenericState::enterState()
+DroneInsideState::~DroneInsideState()
+{
+}
+
+void DroneInsideState::enterState()
 {
     turnOffAllLeds();
     changeLed(0, HIGH);
@@ -39,23 +33,10 @@ void GenericState::enterState()
     Serial.println("Entered Drone Inside State");
 }
 
-void GenericState::update()
+void DroneInsideState::update()
 {}
 
-void GenericState::button()
-{}
-
-void GenericState::display()
-{}
-
-void GenericState::pir()
-{}
-
-void GenericState::sonar()
-{}
-
-void GenericState::temperature()
-{}
-
-void GenericState::exitState()
-{}
+void DroneInsideState::exitState()
+{
+    lcd.clear();
+}
