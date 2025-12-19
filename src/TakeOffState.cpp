@@ -5,9 +5,10 @@ TakeOffState::TakeOffState(
     Servo &servo,
     LiquidCrystal_I2C &lcd,
     int pin_echo,
-    int pin_trig
+    int pin_trig,
+    NewPing &sonarUsed
 )
-: GenericState(leds, servo, lcd, pin_echo, pin_trig)
+: GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed)
 {
     initialTime = 0;
     T1 = 10000;
@@ -36,25 +37,44 @@ void TakeOffState::enterState()
 
 void TakeOffState::update()
 {
-    // TODO: Fix this because still wrong
-    if (getDistance() >= D1)
+    unsigned long distance = getDistance();
+    // For Noise maybe
+    if (distance <= 0 || distance > 400) 
     {
-        // Serial.println("Update");
-        if(initialTime == 0)
+        return; 
+    }
+
+    // 1. Check if the condition is BROKEN (Drone is too low)
+    if (distance < D1)
+    {
+        // Reset the timer flag because distance requirement isn't met
+        initialTime = 0;
+    }
+    // 2. Condition IS met (Drone is high enough)
+    else 
+    {
+        // If the timer hasn't started yet, start it now
+        if (initialTime == 0)
         {
             initialTime = millis();
-            currentTime = initialTime;
         }
+        // If the timer is already running, check how much time has passed
         else
         {
-          Serial.println(currentTime);
-            if (currentTime - initialTime >= T1)
+            unsigned long elapsedTime = millis() - initialTime;
+            
+            Serial.print("Elapsed Time => ");
+            Serial.println(elapsedTime);
+
+            // Debugging (Note: String concat with numbers doesn't work well in C++)
+            if (elapsedTime >= T1)
             {
-                Serial.println("Time Passed => " + millis() - initialTime);
                 closeMotor();
                 writeOnDisplay(0, 0, "DRONE OUT");
+                
+                // Optional: You might want to switch states here 
+                // or add a flag so this doesn't write to the LCD repeatedly
             }
-            currentTime = millis();
         }
     }
 }

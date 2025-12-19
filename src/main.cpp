@@ -33,6 +33,8 @@ LiquidCrystal_I2C lcd(I2C_ADDRESS, 16, 2);
 
 GenericState* initialState;
 
+NewPing sonar(PIN_TRIG, PIN_ECHO);
+
 void setup()
 {
     myServo.attach(SERVO_PIN);
@@ -48,7 +50,7 @@ void setup()
     pinMode(4, OUTPUT);
     pinMode(5, OUTPUT);
 
-    initialState = new TakeOffState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG);
+    initialState = new TakeOffState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar);
     // StateManager* stateManager = new StateManager(initialState);
     initialState->enterState();
 }

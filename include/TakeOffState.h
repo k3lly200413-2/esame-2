@@ -14,7 +14,7 @@ private:
     
 public:
     TakeOffState(
-        int leds[3], Servo &servo, LiquidCrystal_I2C &lcd, int pin_echo, int pin_trig
+        int leds[3], Servo &servo, LiquidCrystal_I2C &lcd, int pin_echo, int pin_trig, NewPing &sonarUsed
     );
     
     ~TakeOffState();

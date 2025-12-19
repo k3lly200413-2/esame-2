@@ -13,12 +13,13 @@ DroneInsideState::DroneInsideState(
     Servo &servo,
     LiquidCrystal_I2C &lcd,
     int pin_echo,
-    int pin_trig
+    int pin_trig,
+    NewPing &sonarUsed
 )
 
     // : is a list of constructors, used to construct the variables before the constructor of the class in question
     // lcd is a pointer, because of this we need to pass an initialised version of the class ( I think ) so we need to understand when we need to initialise the first pointer to the liquidcristali2c class
-    : GenericState(leds, servo, lcd, pin_echo, pin_trig)
+    : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed)
 {
 }
 

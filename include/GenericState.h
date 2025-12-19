@@ -3,6 +3,7 @@
 #include<Arduino.h>
 #include<LiquidCrystal_I2C.h>
 #include<Servo.h>
+#include<NewPing.h>
 
 class GenericState
 {
@@ -13,6 +14,7 @@ class GenericState
         Servo &servoUsed;
         int trig_pin;
         int echo_pin;
+        NewPing &sonar;
 
         void writeOnDisplay(int cursorX, int cursorY, char *text);
         
@@ -47,7 +49,7 @@ class GenericState
         //     }
         // }
 
-        int getDistance();
+        unsigned long getDistance();
 
     public:
         GenericState(
@@ -55,7 +57,8 @@ class GenericState
             Servo &servo,
             LiquidCrystal_I2C &lcdRef,
             int pin_echo,
-            int pin_trig
+            int pin_trig,
+            NewPing &sonarUsed
         );
         // : servoUsed(servo), lcd(lcdRef) // Initializer list is required for References
         // {
