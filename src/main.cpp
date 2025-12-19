@@ -51,7 +51,7 @@ void setup()
     pinMode(4, OUTPUT);
     pinMode(5, OUTPUT);
 
-    initialState = new TakeOffState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, pirOutPin);
+    initialState = new LandingState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, pirOutPin);
     // StateManager* stateManager = new StateManager(initialState);
     initialState->enterState();
 }
