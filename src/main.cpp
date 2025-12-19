@@ -4,6 +4,7 @@
 #include "GenericState.h"
 #include "DroneInsideState.h"
 #include "TakeOffState.h"
+#include "LandingState.h"
 
 // DO NOT USE SEMICOLONS THEY BECOME PART OF THE MACRO 
 // E.G. Don't do:
@@ -42,7 +43,7 @@ void setup()
     lcd.init();
     lcd.backlight();
 
-    pinMode(2, INPUT);  // PIR
+    pinMode(2, INPUT_PULLUP);  // PIR
     pinMode(6, INPUT);  // BUTTON
 
     // LEDs
@@ -50,7 +51,7 @@ void setup()
     pinMode(4, OUTPUT);
     pinMode(5, OUTPUT);
 
-    initialState = new TakeOffState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar);
+    initialState = new TakeOffState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, pirOutPin);
     // StateManager* stateManager = new StateManager(initialState);
     initialState->enterState();
 }

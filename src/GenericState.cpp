@@ -7,7 +7,9 @@ GenericState::GenericState(
     LiquidCrystal_I2C &lcdRef,
     int pin_echo,
     int pin_trig,
-    NewPing &sonarUsed)
+    NewPing &sonarUsed,
+    int pirState
+)
 : servoUsed(servo), lcd(lcdRef), echo_pin(pin_echo), trig_pin(pin_trig), sonar(sonarUsed)
 {
     for (int i = 0; i < 3; i++)

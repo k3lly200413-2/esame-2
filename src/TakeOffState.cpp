@@ -6,9 +6,10 @@ TakeOffState::TakeOffState(
     LiquidCrystal_I2C &lcd,
     int pin_echo,
     int pin_trig,
-    NewPing &sonarUsed
+    NewPing &sonarUsed,
+    int pirState
 )
-: GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed)
+: GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState)
 {
     initialTime = 0;
     T1 = 10000;

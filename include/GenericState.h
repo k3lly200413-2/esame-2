@@ -15,6 +15,7 @@ class GenericState
         int trig_pin;
         int echo_pin;
         NewPing &sonar;
+        int pirState;
 
         void writeOnDisplay(int cursorX, int cursorY, char *text);
         
@@ -58,7 +59,8 @@ class GenericState
             LiquidCrystal_I2C &lcdRef,
             int pin_echo,
             int pin_trig,
-            NewPing &sonarUsed
+            NewPing &sonarUsed,
+            int pirState
         );
         // : servoUsed(servo), lcd(lcdRef) // Initializer list is required for References
         // {

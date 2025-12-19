@@ -1,20 +1,19 @@
-#ifndef TAKEOFF_H
-#define TAKEOFF_H
+#ifndef LANDING_H
+#define LANDING_H
 
 #include "GenericState.h"
-#include "StateManagerHeader.h"
 
-class TakeOffState : public GenericState
+class LandingState : public GenericState
 {
 private:
+    unsigned long D2;
+    unsigned long T2;
     unsigned long initialTime;
     unsigned long currentTime;
-    int T1;
-    int D1;
-    
+    int pirOutPinUsed;
 public:
-    TakeOffState(
-        int leds[3], 
+    LandingState(
+        int leds[3],
         Servo &servo, 
         LiquidCrystal_I2C &lcd, 
         int pin_echo, 
@@ -22,13 +21,11 @@ public:
         NewPing &sonarUsed,
         int pirState
     );
-    
-    ~TakeOffState();
+    ~LandingState();
 
     void enterState() override;
     void update() override;
     void exitState() override;
-
 };
 
 
