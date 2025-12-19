@@ -11,7 +11,7 @@ LandingState::LandingState(
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState)
 {
     D2 = 10;
-    T2 = 5000;
+    T2 = 4000;
     initialTime = 0;
     currentTime = 0;
     pirOutPinUsed = pirOutPin;
