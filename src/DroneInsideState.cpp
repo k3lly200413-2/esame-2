@@ -17,7 +17,7 @@ DroneInsideState::DroneInsideState(
     NewPing &sonarUsed,
     int pirState,
     uint8_t analog_pin,
-    int beta
+    float beta
 )
 
     // : is a list of constructors, used to construct the variables before the constructor of the class in question

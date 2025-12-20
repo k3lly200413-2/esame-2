@@ -17,7 +17,7 @@ public:
         NewPing &sonarUsed,
         int pirState,
         uint8_t analog_pin,
-        int beta
+        float beta
     );
     ~PreAlarmState();
 

@@ -17,7 +17,7 @@ class GenericState
         NewPing &sonar;
         int pirState;
         uint8_t analog_pin;
-        int beta;
+        float beta;
 
         void writeOnDisplay(int cursorX, int cursorY, char *text);
         
@@ -66,7 +66,7 @@ class GenericState
             NewPing &sonarUsed,
             int pirState,
             uint8_t analog_pin,
-            int beta
+            float beta
         );
         // : servoUsed(servo), lcd(lcdRef) // Initializer list is required for References
         // {

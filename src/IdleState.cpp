@@ -1,5 +1,5 @@
 #include "IdleState.h"
-#include "PreAlarmState.hpp"
+#include "PreAlarmState.h"
 
 IdleState::IdleState(
     int leds[3],
@@ -10,12 +10,13 @@ IdleState::IdleState(
     NewPing &sonarUsed,
     int pirState,
     uint8_t analog_pin,
-    int beta
+    float beta
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
-    maxTemp = 100.0;
+    maxTemp = 50.0;
     initalTime = 0;
+    T3 = 5000;
 }
 
 IdleState::~IdleState()
@@ -30,6 +31,8 @@ void IdleState::enterState()
 GenericState* IdleState::update()
 {
     // Serial.println("Updating Idle State. Doing Nothing");
+    Serial.print("Temp => ");
+    Serial.println(getTemp());
     if (getTemp() < maxTemp)
     {
         initalTime = 0;

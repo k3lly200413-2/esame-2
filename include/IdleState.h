@@ -3,12 +3,13 @@
 
 #include "GenericState.h"
 
-#define T3 5
+
 class IdleState : public GenericState
 {
 private:
     float maxTemp;
     int initalTime;
+    unsigned int T3;
 public:
     IdleState(
         int leds[3],
@@ -19,7 +20,7 @@ public:
         NewPing &sonarUsed,
         int pirState,
         uint8_t analog_pin,
-        int beta
+        float beta
     );
     ~IdleState();
 

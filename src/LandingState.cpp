@@ -10,7 +10,7 @@ LandingState::LandingState(
     NewPing &sonarUsed,
     int pirOutPin,
     uint8_t analog_pin,
-    int beta
+    float beta
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {

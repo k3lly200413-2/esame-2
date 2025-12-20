@@ -10,9 +10,9 @@ GenericState::GenericState(
     NewPing &sonarUsed,
     int pirState,
     uint8_t analog_pin,
-    int beta
+    float beta
 )
-: servoUsed(servo), lcd(lcdRef), echo_pin(pin_echo), trig_pin(pin_trig), sonar(sonarUsed), analog_pin(analog_pin)
+: servoUsed(servo), lcd(lcdRef), echo_pin(pin_echo), trig_pin(pin_trig), sonar(sonarUsed), analog_pin(analog_pin), beta(beta)
 {
     for (int i = 0; i < 3; i++)
         ledPins[i] = leds[i];
@@ -73,5 +73,9 @@ unsigned long GenericState::getDistance()
 
 float GenericState::getTemp()
 {
+    Serial.print("AnalogRead => ");
+    Serial.println(analogRead(analog_pin));
+    Serial.print("beta => ");
+    Serial.println(beta);
     return 1 / ( log( 1 /( 1023. / analogRead(analog_pin) - 1 )) / beta + 1.0 / 298.15 ) - 273.15;
 }

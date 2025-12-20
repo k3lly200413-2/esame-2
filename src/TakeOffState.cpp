@@ -10,7 +10,7 @@ TakeOffState::TakeOffState(
     NewPing &sonarUsed,
     int pirState,
     uint8_t analog_pin,
-    int beta
+    float beta
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {

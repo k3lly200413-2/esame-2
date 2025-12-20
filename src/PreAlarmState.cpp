@@ -1,5 +1,5 @@
 #include "GenericState.h"
-#include "PreAlarmState.hpp"
+#include "PreAlarmState.h"
 
 PreAlarmState::PreAlarmState(
     int leds[3],
@@ -10,10 +10,14 @@ PreAlarmState::PreAlarmState(
     NewPing &sonarUsed,
     int pirState,
     uint8_t analog_pin,
-    int beta
+    float beta
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {}
+
+PreAlarmState::~PreAlarmState()
+{
+}
 
 void PreAlarmState::enterState()
 {
