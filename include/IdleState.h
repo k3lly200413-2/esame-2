@@ -3,10 +3,12 @@
 
 #include "GenericState.h"
 
+#define T3 5
 class IdleState : public GenericState
 {
 private:
-    /* data */
+    float maxTemp;
+    int initalTime;
 public:
     IdleState(
         int leds[3],
