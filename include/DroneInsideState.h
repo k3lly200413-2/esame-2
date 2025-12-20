@@ -21,7 +21,7 @@ class DroneInsideState : public GenericState
 
     ~DroneInsideState();
     void enterState() override;
-    void update() override;
+    GenericState* update() override;
     void exitState() override;
 };
 

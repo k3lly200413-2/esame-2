@@ -11,6 +11,8 @@ private:
     unsigned long currentTime;
     int T1;
     int D1;
+    int lastBlinkTime;
+    bool isLedOn;
     
 public:
     TakeOffState(
@@ -26,7 +28,7 @@ public:
     ~TakeOffState();
 
     void enterState() override;
-    void update() override;
+    GenericState* update() override;
     void exitState() override;
 
 };

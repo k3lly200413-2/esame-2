@@ -60,5 +60,12 @@ void loop()
 {
     // Serial.println("We're Looping");
 
-    initialState->update();
+    GenericState* nextState = initialState->update();
+    if (nextState != NULL)
+    {
+        initialState->exitState();
+        delete initialState;
+        initialState = nextState;
+        initialState->enterState();
+    }
 }

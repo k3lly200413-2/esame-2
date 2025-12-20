@@ -1,4 +1,5 @@
 #include "LandingState.h"
+#include "IdleState.h"
 
 LandingState::LandingState(
     int leds[3], 
@@ -15,6 +16,8 @@ LandingState::LandingState(
     initialTime = 0;
     currentTime = 0;
     pirOutPinUsed = pirOutPin;
+    lastBlinkTime = 0;
+    isLedOn = false;
 }
 
 LandingState::~LandingState()
@@ -27,21 +30,28 @@ void LandingState::enterState()
     digitalWrite(pirOutPinUsed, LOW);
     Serial.println("Entered Landing State!");
     Serial.println(digitalRead(pirOutPinUsed));
-
+    lastBlinkTime = millis();
 }
 
-void LandingState::update()
+GenericState* LandingState::update()
 {
+    if (millis() - lastBlinkTime >= 500) // 500ms = 0.5 seconds
+    {
+        // 1. Update the timer
+        lastBlinkTime = millis();
+        
+        // 2. Toggle the state (If ON make OFF, If OFF make ON)
+        isLedOn = !isLedOn;
+        
+        // 3. Write to the LED (Using the first LED in your list)
+        changeLed(1);
+    }
+
     int val = digitalRead(pirOutPinUsed);
     if (val == HIGH)
     {
         if (pirState == LOW)
         {
-            Serial.println("We're in the loop");
-            Serial.print("Distance => ");
-            Serial.println(getDistance());
-            Serial.print("D2 => ");
-            Serial.println(D2);
             if (getDistance() >= D2)
             {
                 initialTime = 0;
@@ -52,7 +62,6 @@ void LandingState::update()
                 if (initialTime == 0)
                 {
                     initialTime = millis();
-                    
                 }
                 else
                 {
@@ -61,13 +70,12 @@ void LandingState::update()
                     {
                         closeMotor();
                         writeOnDisplay(0, 0, "DRONE INSIDE");
+                        exitState();
+                        return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState);
                     }
                 }
             }
         }
-        // openMotor();
-        // writeOnDisplay(0, 0, "LANDING");
-        // pirState = LOW;
     }
     else
     {
@@ -76,10 +84,11 @@ void LandingState::update()
             Serial.println("Motion Ended");
             pirState = LOW;
         }
-        
     }
+    return NULL;
 }
 
 void LandingState::exitState()
 {
+    turnOffAllLeds();
 }

@@ -1,21 +1,14 @@
-#ifndef LANDING_H
-#define LANDING_H
+#ifndef IDLE_H
+#define IDLE_H
 
 #include "GenericState.h"
 
-class LandingState : public GenericState
+class IdleState : public GenericState
 {
 private:
-    unsigned long D2;
-    unsigned long T2;
-    unsigned long initialTime;
-    unsigned long currentTime;
-    int pirOutPinUsed;
-    unsigned long lastBlinkTime;
-    bool isLedOn;
-    
+    /* data */
 public:
-    LandingState(
+    IdleState(
         int leds[3],
         Servo &servo, 
         LiquidCrystal_I2C &lcd, 
@@ -24,12 +17,11 @@ public:
         NewPing &sonarUsed,
         int pirState
     );
-    ~LandingState();
+    ~IdleState();
 
     void enterState() override;
     GenericState* update() override;
     void exitState() override;
 };
-
 
 #endif

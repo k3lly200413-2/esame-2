@@ -29,7 +29,7 @@ class GenericState
         //     servoUsed.write(0);
         // }
         
-        void changeLed(int ledIndex, int newLedState);
+        void changeLed(int ledIndex);
         // {
         //     digitalWrite(ledPins[ledIndex], newLedState);
         // }
@@ -73,7 +73,7 @@ class GenericState
         // Used when the class is no longer used
         virtual ~GenericState() {}
         
-        virtual void update() = 0;
+        virtual GenericState* update() = 0;
         
         virtual void enterState() = 0;
         

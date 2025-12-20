@@ -25,21 +25,10 @@ StateManager::StateManager(
 
 void StateManager::init()
 {
-  pinMode(pirPin, INPUT);
-  pinMode(buttonPin, INPUT);
-  pinMode(tempSensorPin, INPUT);
-  pinMode(sonarPin, INPUT);
-
-  for (int i=0; i < 3; i++)
-  {
-    pinMode(ledPins[i], OUTPUT);
-  }
-
   if (currentState != nullptr)
   {
     currentState->enterState();
   }
-
 }
 
 void StateManager::update()

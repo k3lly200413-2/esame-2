@@ -31,14 +31,17 @@ DroneInsideState::~DroneInsideState()
 void DroneInsideState::enterState()
 {
     turnOffAllLeds();
-    changeLed(0, HIGH);
+    changeLed(0);
     writeOnDisplay(0, 0, "DRONE INSIDE");
     closeMotor();
     Serial.println("Entered Drone Inside State");
 }
 
-void DroneInsideState::update()
-{}
+GenericState* DroneInsideState::update()
+{
+    Serial.println("Inside");
+    return NULL;
+}
 
 void DroneInsideState::exitState()
 {

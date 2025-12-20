@@ -32,8 +32,17 @@ void GenericState::closeMotor()
     servoUsed.write(90);
 }
 
-void GenericState::changeLed(int ledIndex, int newLedState)
+void GenericState::changeLed(int ledIndex)
 {
+    int newLedState;
+    if (digitalRead(ledPins[ledIndex]) == HIGH)
+    {
+        newLedState = LOW;
+    }
+    else
+    {
+        newLedState = HIGH;
+    }
     digitalWrite(ledPins[ledIndex], newLedState);
 }
 

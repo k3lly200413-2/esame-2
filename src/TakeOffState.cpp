@@ -1,4 +1,5 @@
 #include "TakeOffState.h"
+#include "FlyingState.h"
 
 TakeOffState::TakeOffState(
     int leds[3],
@@ -14,6 +15,8 @@ TakeOffState::TakeOffState(
     initialTime = 0;
     T1 = 10000;
     D1 = 30;
+    lastBlinkTime = 0;
+    isLedOn = false;
 }
 
 TakeOffState::~TakeOffState()
@@ -36,8 +39,20 @@ void TakeOffState::enterState()
     writeOnDisplay(0, 0, "TAKE OFF");
 }
 
-void TakeOffState::update()
+GenericState* TakeOffState::update()
 {
+    if (millis() - lastBlinkTime >= 500) // 500ms = 0.5 seconds
+    {
+        // 1. Update the timer
+        lastBlinkTime = millis();
+        
+        // 2. Toggle the state (If ON make OFF, If OFF make ON)
+        isLedOn = !isLedOn;
+        
+        // 3. Write to the LED (Using the first LED in your list)
+        changeLed(1);
+    }
+
     unsigned long distance = getDistance();
     // For Noise maybe
     if (distance <= 0 || distance > 400) 
@@ -72,12 +87,11 @@ void TakeOffState::update()
             {
                 closeMotor();
                 writeOnDisplay(0, 0, "DRONE OUT");
-                
-                // Optional: You might want to switch states here 
-                // or add a flag so this doesn't write to the LCD repeatedly
+                return new FlyingState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState);
             }
         }
     }
+    return NULL;
 }
 
 void TakeOffState::exitState()
