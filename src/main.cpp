@@ -16,19 +16,19 @@
 #define PIN_TRIG 8
 #define PIN_ECHO 7
 #define SERVO_PIN 3
+#define BETA 3950
+#define TEMP_PIN A0
 
 Servo myServo;
 
 int pirOutPin = 2;
 int val = LOW;
 int pirState = LOW;
-const float BETA = 3950;
-int ledPins[] = { 4, 5, 6 };
-int buttonPin = 9;
 
+int ledPins[] = { 4, 5, 6 };
 int ledPin = 13;
 
-
+int buttonPin = 9;
 
 LiquidCrystal_I2C lcd(I2C_ADDRESS, 16, 2);
 
@@ -51,7 +51,7 @@ void setup()
     pinMode(4, OUTPUT);
     pinMode(5, OUTPUT);
 
-    initialState = new LandingState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, pirOutPin);
+    initialState = new LandingState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, pirOutPin, TEMP_PIN, BETA);
     // StateManager* stateManager = new StateManager(initialState);
     initialState->enterState();
 }

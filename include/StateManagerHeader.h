@@ -26,7 +26,8 @@ class StateManager {
       int ledPins[3],
       int buttonPin,
       int tempSensorPin,
-      int sonarPin);
+      int sonarPin,
+      uint8_t analog_pin);
 
     void init();
 

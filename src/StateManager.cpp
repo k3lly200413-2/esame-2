@@ -8,7 +8,8 @@ StateManager::StateManager(
   int leds[3],
   int button,
   int tempSensor,
-  int sonar)
+  int sonar,
+  uint8_t analog_pin)
 {
 
   currentState = startingState;

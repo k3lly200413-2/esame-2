@@ -16,7 +16,9 @@ class DroneInsideState : public GenericState
         int pin_echo, 
         int pin_trig, 
         NewPing &sonarUsed,
-        int pirState
+        int pirState,
+        uint8_t analog_pin,
+        int beta
     );
 
     ~DroneInsideState();

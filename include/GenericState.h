@@ -16,6 +16,8 @@ class GenericState
         int echo_pin;
         NewPing &sonar;
         int pirState;
+        uint8_t analog_pin;
+        int beta;
 
         void writeOnDisplay(int cursorX, int cursorY, char *text);
         
@@ -52,6 +54,8 @@ class GenericState
 
         unsigned long getDistance();
 
+        float getTemp();
+
     public:
         GenericState(
             int leds[3],
@@ -60,7 +64,9 @@ class GenericState
             int pin_echo,
             int pin_trig,
             NewPing &sonarUsed,
-            int pirState
+            int pirState,
+            uint8_t analog_pin,
+            int beta
         );
         // : servoUsed(servo), lcd(lcdRef) // Initializer list is required for References
         // {

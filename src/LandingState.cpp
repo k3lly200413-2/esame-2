@@ -8,8 +8,11 @@ LandingState::LandingState(
     int pin_echo, 
     int pin_trig, 
     NewPing &sonarUsed,
-    int pirOutPin)
-: GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState)
+    int pirOutPin,
+    uint8_t analog_pin,
+    int beta
+)
+: GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
     D2 = 10;
     T2 = 4000;
@@ -71,7 +74,7 @@ GenericState* LandingState::update()
                         closeMotor();
                         writeOnDisplay(0, 0, "DRONE INSIDE");
                         exitState();
-                        return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState);
+                        return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
                     }
                 }
             }

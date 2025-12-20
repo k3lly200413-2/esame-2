@@ -8,9 +8,11 @@ GenericState::GenericState(
     int pin_echo,
     int pin_trig,
     NewPing &sonarUsed,
-    int pirState
+    int pirState,
+    uint8_t analog_pin,
+    int beta
 )
-: servoUsed(servo), lcd(lcdRef), echo_pin(pin_echo), trig_pin(pin_trig), sonar(sonarUsed)
+: servoUsed(servo), lcd(lcdRef), echo_pin(pin_echo), trig_pin(pin_trig), sonar(sonarUsed), analog_pin(analog_pin)
 {
     for (int i = 0; i < 3; i++)
         ledPins[i] = leds[i];
@@ -67,4 +69,9 @@ unsigned long GenericState::getDistance()
     delay(50);                     // Wait 50ms between pings (about 20 pings/sec). 29ms should be the shortest delay between pings.
     unsigned long distance = sonar.ping_cm();
     return distance;
+}
+
+float GenericState::getTemp()
+{
+    return 1 / ( log( 1 /( 1023. / analogRead(analog_pin) - 1 )) / beta + 1.0 / 298.15 ) - 273.15;
 }

@@ -7,9 +7,11 @@ IdleState::IdleState(
     int pin_echo, 
     int pin_trig, 
     NewPing &sonarUsed,
-    int pirState
+    int pirState,
+    uint8_t analog_pin,
+    int beta
 )
-: GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState)
+: GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
 }
 
