@@ -11,12 +11,14 @@ PreAlarmState::PreAlarmState(
     NewPing &sonarUsed,
     int pirState,
     uint8_t analog_pin,
-    float beta
+    float beta,
+    GenericState* previousState
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
     maxTemp2 = 70;
-    T4 = 3;
+    T4 = 3000;
+    this->previousState = previousState;
 }
 
 PreAlarmState::~PreAlarmState()
@@ -54,7 +56,7 @@ GenericState* PreAlarmState::update()
             int elapsedTime = millis() - initalTime;
             if (elapsedTime >= T4)
             {
-                return new FullAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
+                return new FullAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta, previousState);
             }
         }
     }

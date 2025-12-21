@@ -29,8 +29,10 @@ void IdleState::enterState()
 {
     
     clearScreen();
-    Serial.println("Entered Idle State");
-    Serial.println(pirPin);
+    turnOffAllLeds();
+    changeLed(0);
+    writeOnDisplay(0, 0, "DRONE INSIDE");
+    closeMotor();
 }
 
 bool IdleState::canEmergencyStop() const
@@ -44,7 +46,7 @@ GenericState* IdleState::update()
     Serial.println(getAlarmState());
     if (preAlarmStateCheck() || getAlarmState())
     {
-        return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta);
+        return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta, this);
         /* Don't Start new Flight */
     }
     // return NULL;

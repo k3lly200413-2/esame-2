@@ -38,6 +38,7 @@ void TakeOffState::enterState()
         otherwise:
             Do nothing I guess?
     */
+    turnOffAllLeds();   
     clearScreen();
     openMotor();
     writeOnDisplay(0, 0, "TAKE OFF");

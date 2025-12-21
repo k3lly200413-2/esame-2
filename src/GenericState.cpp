@@ -19,7 +19,7 @@ GenericState::GenericState(
 {
     // bool alarmState;
     maxTemp = 50;
-    T3 = 3;
+    T3 = 3000;
     for (int i = 0; i < 3; i++)
     {
         ledPins[i] = leds[i];
@@ -91,7 +91,8 @@ float GenericState::getTemp()
     // Serial.println(analogRead(analog_pin));
     // Serial.print("beta => ");
     // Serial.println(beta);
-    return 1 / ( log( 1 /( 1023. / analogRead(analog_pin) - 1 )) / beta + 1.0 / 298.15 ) - 273.15;
+    float tempSensorValue = analogRead(analog_pin);
+    return 1 / ( log( 1 /( 1023. / tempSensorValue - 1 )) / beta + 1.0 / 298.15 ) - 273.15;
 }
 
 bool GenericState::preAlarmStateCheck()
@@ -109,7 +110,7 @@ bool GenericState::preAlarmStateCheck()
         }
         else
         {
-            int elapsedTime = millis() - initalTime;
+            unsigned long elapsedTime = millis() - initalTime;
             Serial.println(elapsedTime);
             if (elapsedTime >= T3)
             {

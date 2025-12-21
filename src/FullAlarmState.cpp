@@ -9,10 +9,12 @@ FullAlarmState::FullAlarmState(
     NewPing &sonarUsed, 
     int pirState, 
     uint8_t analog_pin, 
-    float beta
+    float beta,
+    GenericState* previousState
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
+    this->previousState = previousState;
 }
 
 FullAlarmState::~FullAlarmState()
@@ -24,8 +26,13 @@ void FullAlarmState::enterState()
     clearScreen();
     closeMotor();
     turnOffAllLeds();
-    changeLed(3);
+    changeLed(2);
     writeOnDisplay(0, 0, "YO WE GONE DIE");
+}
+
+bool FullAlarmState::canEmergencyStop() const
+{
+    return false;
 }
 
 GenericState *FullAlarmState::update()
@@ -36,3 +43,8 @@ GenericState *FullAlarmState::update()
 void FullAlarmState::exitState()
 {
 }
+
+GenericState* FullAlarmState::getPreviousState()
+{
+    return this->previousState;
+} 

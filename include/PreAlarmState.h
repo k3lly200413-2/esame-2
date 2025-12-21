@@ -9,6 +9,7 @@ private:
     int maxTemp2;
     unsigned int initalTime;
     unsigned int T4;
+    GenericState* previousState;
 
 public:
     PreAlarmState(
@@ -20,7 +21,8 @@ public:
         NewPing &sonarUsed,
         int pirState,
         uint8_t analog_pin,
-        float beta
+        float beta,
+        GenericState* previousState
     );
     ~PreAlarmState();
 

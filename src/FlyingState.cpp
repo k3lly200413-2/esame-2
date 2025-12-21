@@ -1,5 +1,6 @@
 #include "FlyingState.h"
 #include "LandingState.h"
+#include "PreAlarmState.h"
 
 FlyingState::FlyingState(
     int leds[3],
@@ -45,7 +46,8 @@ GenericState* FlyingState::update()
     if (getAlarmState())
     {
         writeOnDisplay(0, 0, "NUH HUH");
-        return NULL;
+        return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta, this);
+        // return NULL;
     }
     int val = digitalRead(pirPin);
     

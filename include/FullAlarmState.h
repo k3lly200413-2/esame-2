@@ -6,7 +6,7 @@
 class FullAlarmState : public GenericState
 {
 private:
-
+    GenericState* previousState;
 public:
     FullAlarmState(
         int leds[3], 
@@ -17,13 +17,15 @@ public:
         NewPing &sonarUsed,
         int pirState,
         uint8_t analog_pin,
-        float beta
+        float beta,
+        GenericState* previousState
     );
     ~FullAlarmState();
 
     void enterState() override;
     bool canEmergencyStop() const override; 
     GenericState* update() override;
+    GenericState* getPreviousState();
     void exitState() override;
 
 };
