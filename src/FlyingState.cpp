@@ -30,8 +30,8 @@ FlyingState::~FlyingState()
 
 void FlyingState::enterState()
 {
+    turnOffAllLeds();
     clearScreen();
-    Serial.println("Entered Idle State");
     writeOnDisplay(0, 0, "ENTERED FLYING STATE");
 }
 
@@ -51,7 +51,6 @@ GenericState* FlyingState::update()
     
     Serial.println(pirPin);
 
-    // 1. Check if the sensor has "cooled down" (gone LOW)
     if (val == HIGH)
     {        
         // Update internal state tracking

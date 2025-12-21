@@ -20,6 +20,11 @@ GenericState::GenericState(
     // bool alarmState;
     maxTemp = 50;
     T3 = 3;
+    for (int i = 0; i < 3; i++)
+    {
+        ledPins[i] = leds[i];
+    }
+
 }
 
 bool GenericState::canEmergencyStop() const

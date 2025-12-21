@@ -55,10 +55,7 @@ GenericState* TakeOffState::update()
     {
         // 1. Update the timer
         lastBlinkTime = millis();
-        
-        // 2. Toggle the state (If ON make OFF, If OFF make ON)
-        isLedOn = !isLedOn;
-        
+                
         // 3. Write to the LED (Using the first LED in your list)
         changeLed(1);
     }

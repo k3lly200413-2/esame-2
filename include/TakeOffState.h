@@ -12,7 +12,7 @@ private:
     int pirPin;
     int T1;
     int D1;
-    int lastBlinkTime;
+    unsigned long lastBlinkTime;
     bool isLedOn;
     
 public:
