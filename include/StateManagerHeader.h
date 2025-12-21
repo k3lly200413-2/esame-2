@@ -11,6 +11,7 @@ class StateManager {
      * Need to put a pointer instead of a instance of a class becasue if I put the instance of it memory gets allocated only to that one variable 
     */
     GenericState* currentState;
+    GenericState* generalState;
     int servoPin;
     int pirPin;
     int ledPins[3];
@@ -20,14 +21,8 @@ class StateManager {
   
   public:
     StateManager(
-      GenericState* startingState,
-      int servoPin, 
-      int pirPin, 
-      int ledPins[3],
-      int buttonPin,
-      int tempSensorPin,
-      int sonarPin,
-      uint8_t analog_pin);
+      GenericState* startingState
+    );
 
     void init();
 

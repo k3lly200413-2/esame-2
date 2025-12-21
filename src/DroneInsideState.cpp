@@ -1,4 +1,5 @@
 #include "DroneInsideState.h"
+#include "IdleState.h"
 
 /*
 Available functions not declaired:
@@ -32,6 +33,7 @@ DroneInsideState::~DroneInsideState()
 
 void DroneInsideState::enterState()
 {
+    clearScreen();
     turnOffAllLeds();
     changeLed(0);
     writeOnDisplay(0, 0, "DRONE INSIDE");
@@ -42,7 +44,7 @@ void DroneInsideState::enterState()
 GenericState* DroneInsideState::update()
 {
     Serial.println("Inside");
-    return NULL;
+    return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
 }
 
 void DroneInsideState::exitState()

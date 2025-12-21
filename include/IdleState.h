@@ -7,9 +7,7 @@
 class IdleState : public GenericState
 {
 private:
-    float maxTemp;
-    int initalTime;
-    unsigned int T3;
+    int pirPin;
 public:
     IdleState(
         int leds[3],
@@ -25,6 +23,7 @@ public:
     ~IdleState();
 
     void enterState() override;
+    bool canEmergencyStop() const override; 
     GenericState* update() override;
     void exitState() override;
 };

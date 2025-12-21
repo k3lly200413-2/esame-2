@@ -1,5 +1,8 @@
 #include "GenericState.h"
+#include "PreAlarmState.h"
 #include<NewPing.h>
+
+bool GenericState::alarmState = false;
 
 GenericState::GenericState(
     int leds[3],
@@ -14,8 +17,14 @@ GenericState::GenericState(
 )
 : servoUsed(servo), lcd(lcdRef), echo_pin(pin_echo), trig_pin(pin_trig), sonar(sonarUsed), analog_pin(analog_pin), beta(beta)
 {
-    for (int i = 0; i < 3; i++)
-        ledPins[i] = leds[i];
+    // bool alarmState;
+    maxTemp = 50;
+    T3 = 3;
+}
+
+bool GenericState::canEmergencyStop() const
+{
+    return true;
 }
 
 void GenericState::writeOnDisplay(int cursorX, int cursorY, char *text)
@@ -73,9 +82,52 @@ unsigned long GenericState::getDistance()
 
 float GenericState::getTemp()
 {
-    Serial.print("AnalogRead => ");
-    Serial.println(analogRead(analog_pin));
-    Serial.print("beta => ");
-    Serial.println(beta);
+    // Serial.print("AnalogRead => ");
+    // Serial.println(analogRead(analog_pin));
+    // Serial.print("beta => ");
+    // Serial.println(beta);
     return 1 / ( log( 1 /( 1023. / analogRead(analog_pin) - 1 )) / beta + 1.0 / 298.15 ) - 273.15;
+}
+
+bool GenericState::preAlarmStateCheck()
+{
+
+    if (getTemp() < maxTemp)
+    {
+        initalTime = 0;
+    }
+    else
+    {
+        if (initalTime == 0)
+        {
+            initalTime = millis();
+        }
+        else
+        {
+            int elapsedTime = millis() - initalTime;
+            Serial.println(elapsedTime);
+            if (elapsedTime >= T3)
+            {
+                Serial.print("PreAlarmState => true");
+                setAlarmState(true);
+                return true; /* new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);*/
+            }
+        }
+    }
+    return false;
+}
+
+void GenericState::setAlarmState(bool newState)
+{
+    alarmState = newState;
+}
+
+bool GenericState::getAlarmState()
+{
+    return alarmState;
+}
+
+void GenericState::clearScreen()
+{
+    lcd.clear();
 }

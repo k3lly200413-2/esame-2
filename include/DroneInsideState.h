@@ -23,6 +23,7 @@ class DroneInsideState : public GenericState
 
     ~DroneInsideState();
     void enterState() override;
+    bool canEmergencyStop() const override; 
     GenericState* update() override;
     void exitState() override;
 };

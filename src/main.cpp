@@ -1,72 +1,71 @@
-#include<Servo.h>
+#include <Servo.h>
 #include <Arduino.h>
-#include<LiquidCrystal_I2C.h>
+#include <LiquidCrystal_I2C.h>
 #include "GenericState.h"
 #include "DroneInsideState.h"
 #include "TakeOffState.h"
 #include "LandingState.h"
+#include "IdleState.h"
 
-// DO NOT USE SEMICOLONS THEY BECOME PART OF THE MACRO 
-// E.G. Don't do:
-    // #define I2C_ADDRESS 0x27;
-    // but do:
+// --- PIN DEFINITIONS ---
 #define I2C_ADDRESS 0x27
-#define DISPLAY_ROW 2
-#define DISPLAY_COLUMN 16
 #define PIN_TRIG 8
 #define PIN_ECHO 7
-#define SERVO_PIN 3
+#define SERVO_PIN 3  // Note: On ESP32, Pin 3 is RX0 (High at boot). Use Pin 4, 5, or 13 if possible.
 #define TEMP_PIN A0
 
-Servo myServo;
+// CHANGED: Moved PIR to Pin 12 to avoid conflict with Pin 2 (Onboard LED/Strapping Pin)
+const int pirOutPin = 12; 
 
-int pirOutPin = 2;
-int val = LOW;
-int pirState = LOW;
+// CHANGED: Button is on Pin 9 (as per your variable), not 6!
+const int buttonPin = 9;  
 
+// LEDs on 4, 5, 6
 int ledPins[] = { 4, 5, 6 };
-int ledPin = 13;
-
-int buttonPin = 9;
 
 const float BETA = 3950;
 
+Servo myServo;
 LiquidCrystal_I2C lcd(I2C_ADDRESS, 16, 2);
-
-GenericState* initialState;
-
 NewPing sonar(PIN_TRIG, PIN_ECHO);
+GenericState* initialState;
+StateManager* stateManager;
 
 void setup()
 {
-    myServo.attach(SERVO_PIN);
     Serial.begin(9600);
+    
+    // 1. Initialize Display
     lcd.init();
     lcd.backlight();
 
-    pinMode(2, INPUT_PULLUP);  // PIR
-    pinMode(6, INPUT);  // BUTTON
+    // 2. Initialize Servo
+    myServo.attach(SERVO_PIN);
+    // REMOVED: pinMode(3, OUTPUT); -> Servo library handles this.
 
-    // LEDs
-    pinMode(3, OUTPUT);
-    pinMode(4, OUTPUT);
-    pinMode(5, OUTPUT);
+    // 3. Initialize Sensors
+    pinMode(pirOutPin, INPUT); 
+    pinMode(buttonPin, INPUT); // Changed from 6 to buttonPin (9)
 
-    initialState = new LandingState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, pirOutPin, TEMP_PIN, BETA);
-    // StateManager* stateManager = new StateManager(initialState);
-    initialState->enterState();
+    // 4. Initialize LEDs
+    // We loop through the array to prevent mistakes
+    for (int i = 0; i < 3; i++) {
+        pinMode(ledPins[i], OUTPUT);
+    }
+
+    // 5. Initialize State Machine
+    Serial.print("PIR PIN => ");
+    Serial.print(pirOutPin);
+    initialState = new IdleState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, pirOutPin, TEMP_PIN, BETA);
+    stateManager = new StateManager(initialState);
+    stateManager->init();
+    
+    Serial.println("System Initialized. Waiting for PIR...");
 }
 
 void loop()
 {
-    // Serial.println("We're Looping");
-
-    GenericState* nextState = initialState->update();
-    if (nextState != NULL)
-    {
-        initialState->exitState();
-        delete initialState;
-        initialState = nextState;
-        initialState->enterState();
-    }
+    stateManager->update();
+    // Small delay helps Wokwi simulation stability
+    // delay(10); 
 }

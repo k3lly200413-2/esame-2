@@ -1,17 +1,14 @@
-#ifndef PREAL_H
-#define PREAL_H
+#ifndef FULLALARM_H
+#define FULLALARM_H
 
 #include "GenericState.h"
 
-class PreAlarmState : public GenericState
+class FullAlarmState : public GenericState
 {
 private:
-    int maxTemp2;
-    unsigned int initalTime;
-    unsigned int T4;
 
 public:
-    PreAlarmState(
+    FullAlarmState(
         int leds[3], 
         Servo &servo, 
         LiquidCrystal_I2C &lcd, 
@@ -22,7 +19,7 @@ public:
         uint8_t analog_pin,
         float beta
     );
-    ~PreAlarmState();
+    ~FullAlarmState();
 
     void enterState() override;
     bool canEmergencyStop() const override; 

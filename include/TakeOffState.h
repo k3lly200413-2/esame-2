@@ -9,6 +9,7 @@ class TakeOffState : public GenericState
 private:
     unsigned long initialTime;
     unsigned long currentTime;
+    int pirPin;
     int T1;
     int D1;
     int lastBlinkTime;
@@ -30,6 +31,7 @@ public:
     ~TakeOffState();
 
     void enterState() override;
+    bool canEmergencyStop() const override; 
     GenericState* update() override;
     void exitState() override;
 

@@ -29,6 +29,7 @@ public:
     ~LandingState();
 
     void enterState() override;
+    bool canEmergencyStop() const override; 
     GenericState* update() override;
     void exitState() override;
 };

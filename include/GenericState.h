@@ -8,7 +8,7 @@
 class GenericState
 {
     protected:
-        
+        static bool alarmState;       
         int ledPins[3];
         LiquidCrystal_I2C &lcd;
         Servo &servoUsed;
@@ -18,6 +18,9 @@ class GenericState
         int pirState;
         uint8_t analog_pin;
         float beta;
+        float maxTemp;
+        int initalTime;
+        unsigned int T3;
 
         void writeOnDisplay(int cursorX, int cursorY, char *text);
         
@@ -56,6 +59,12 @@ class GenericState
 
         float getTemp();
 
+        bool preAlarmStateCheck();
+
+        void setAlarmState(bool newState);
+
+        void clearScreen();
+
     public:
         GenericState(
             int leds[3],
@@ -79,9 +88,13 @@ class GenericState
         // Used when the class is no longer used
         virtual ~GenericState() {}
         
-        virtual GenericState* update() = 0;
-        
         virtual void enterState() = 0;
+
+        virtual bool canEmergencyStop() const;
+        
+        virtual bool getAlarmState();
+
+        virtual GenericState* update() = 0;
         
         virtual void exitState() = 0;
 };

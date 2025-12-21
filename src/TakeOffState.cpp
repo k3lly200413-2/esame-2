@@ -8,7 +8,7 @@ TakeOffState::TakeOffState(
     int pin_echo,
     int pin_trig,
     NewPing &sonarUsed,
-    int pirState,
+    int pirPinUsed,
     uint8_t analog_pin,
     float beta
 )
@@ -19,6 +19,7 @@ TakeOffState::TakeOffState(
     D1 = 30;
     lastBlinkTime = 0;
     isLedOn = false;
+    pirPin = pirPinUsed;
 }
 
 TakeOffState::~TakeOffState()
@@ -37,12 +38,19 @@ void TakeOffState::enterState()
         otherwise:
             Do nothing I guess?
     */
+    clearScreen();
     openMotor();
     writeOnDisplay(0, 0, "TAKE OFF");
 }
 
+bool TakeOffState::canEmergencyStop() const
+{
+    return false;
+}
+
 GenericState* TakeOffState::update()
 {
+    preAlarmStateCheck();
     if (millis() - lastBlinkTime >= 500) // 500ms = 0.5 seconds
     {
         // 1. Update the timer
@@ -81,15 +89,16 @@ GenericState* TakeOffState::update()
         {
             unsigned long elapsedTime = millis() - initialTime;
             
-            Serial.print("Elapsed Time => ");
-            Serial.println(elapsedTime);
+            // Serial.print("Elapsed Time => ");
+            // Serial.println(elapsedTime);
 
             // Debugging (Note: String concat with numbers doesn't work well in C++)
             if (elapsedTime >= T1)
             {
                 closeMotor();
                 writeOnDisplay(0, 0, "DRONE OUT");
-                return new FlyingState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
+                Serial.println(pirState);
+                return new FlyingState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta);
             }
         }
     }

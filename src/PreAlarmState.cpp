@@ -1,5 +1,6 @@
 #include "GenericState.h"
 #include "PreAlarmState.h"
+#include "FullAlarmState.h"
 
 PreAlarmState::PreAlarmState(
     int leds[3],
@@ -13,7 +14,10 @@ PreAlarmState::PreAlarmState(
     float beta
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
-{}
+{
+    maxTemp2 = 70;
+    T4 = 3;
+}
 
 PreAlarmState::~PreAlarmState()
 {
@@ -21,11 +25,39 @@ PreAlarmState::~PreAlarmState()
 
 void PreAlarmState::enterState()
 {
+    clearScreen();
+    writeOnDisplay(0, 0, "WE IN CRISIS");
     Serial.println("Entered PreAlarm State!");
+}
+
+bool PreAlarmState::canEmergencyStop() const
+{
+    return false;
 }
 
 GenericState* PreAlarmState::update()
 {
+    Serial.print("Temp => ");
+    Serial.println(getTemp());
+    if (getTemp() < maxTemp2)
+    {
+        initalTime = 0;
+    }
+    else
+    {
+        if (initalTime == 0)
+        {
+            initalTime = millis();
+        }
+        else
+        {
+            int elapsedTime = millis() - initalTime;
+            if (elapsedTime >= T4)
+            {
+                return new FullAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
+            }
+        }
+    }
     return NULL;
 }
 

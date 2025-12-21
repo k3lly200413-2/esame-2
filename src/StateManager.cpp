@@ -1,27 +1,13 @@
 #include "StateManagerHeader.h"
 #include "GenericState.h"
+#include "LandingState.h"
 
 StateManager::StateManager(
-  GenericState* startingState,
-  int servo,
-  int pir,
-  int leds[3],
-  int button,
-  int tempSensor,
-  int sonar,
-  uint8_t analog_pin)
+  GenericState* startingState
+)
 {
-
   currentState = startingState;
-
-  servoPin = servo;
-  pirPin = pir;
-  ledPins[0] = leds[0];
-  ledPins[1] = leds[1];
-  ledPins[2] = leds[2];
-  buttonPin = button;
-  tempSensorPin = tempSensor;
-  sonarPin = sonar;
+  generalState = NULL;
 }
 
 void StateManager::init()
@@ -34,9 +20,11 @@ void StateManager::init()
 
 void StateManager::update()
 {
-  if (currentState != nullptr)
+  GenericState* nextState = currentState->update();
+  Serial.println("Update");
+  if (nextState != NULL)
   {
-    currentState->update();
+    setState(nextState);
   }
 }
 

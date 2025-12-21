@@ -29,15 +29,22 @@ LandingState::~LandingState()
 
 void LandingState::enterState()
 {
+    clearScreen();
     openMotor();
     digitalWrite(pirOutPinUsed, LOW);
-    Serial.println("Entered Landing State!");
-    Serial.println(digitalRead(pirOutPinUsed));
+    writeOnDisplay(0, 0, "WE LANDING");
     lastBlinkTime = millis();
+}
+
+bool LandingState::canEmergencyStop() const
+{
+    return false;
 }
 
 GenericState* LandingState::update()
 {
+    Serial.println("We in da loop");
+    preAlarmStateCheck();
     if (millis() - lastBlinkTime >= 500) // 500ms = 0.5 seconds
     {
         // 1. Update the timer
@@ -50,42 +57,26 @@ GenericState* LandingState::update()
         changeLed(1);
     }
 
-    int val = digitalRead(pirOutPinUsed);
-    if (val == HIGH)
+    if (getDistance() >= D2)
     {
-        if (pirState == LOW)
-        {
-            if (getDistance() >= D2)
-            {
-                initialTime = 0;
-            }
-            else
-            {
-                Serial.println("Distance is fine");
-                if (initialTime == 0)
-                {
-                    initialTime = millis();
-                }
-                else
-                {
-                    currentTime = millis() - initialTime;
-                    if (currentTime > T2)
-                    {
-                        closeMotor();
-                        writeOnDisplay(0, 0, "DRONE INSIDE");
-                        exitState();
-                        return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
-                    }
-                }
-            }
-        }
+        initialTime = 0;
     }
     else
     {
-        if (pirState == HIGH)
+        Serial.println("Distance is fine");
+        if (initialTime == 0)
         {
-            Serial.println("Motion Ended");
-            pirState = LOW;
+            initialTime = millis();
+        }
+        else
+        {
+            currentTime = millis() - initialTime;
+            if (currentTime > T2)
+            {
+                closeMotor();
+                writeOnDisplay(0, 0, "DRONE INSIDE");
+                return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
+            }
         }
     }
     return NULL;
