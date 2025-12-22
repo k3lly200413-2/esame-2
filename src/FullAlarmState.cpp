@@ -1,4 +1,5 @@
 #include "FullAlarmState.h"
+#include "ButtonsHeader.h"
 
 FullAlarmState::FullAlarmState(
     int leds[3], 
@@ -37,6 +38,11 @@ bool FullAlarmState::canEmergencyStop() const
 
 GenericState *FullAlarmState::update()
 {
+    if (digitalRead(BUTTON_PIN) == HIGH)
+    {
+        setAlarmState(false);
+        return this->previousState;
+    }
     return NULL;
 }
 
@@ -46,6 +52,7 @@ void FullAlarmState::exitState()
 
 GenericState* FullAlarmState::getPreviousState()
 {
+    setAlarmState(false);
     return this->previousState;
 }
 
