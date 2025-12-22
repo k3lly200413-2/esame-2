@@ -27,7 +27,7 @@ public:
     GenericState* update() override;
     GenericState* getPreviousState();
     void exitState() override;
-
+    GenericState* clone() override;
 };
 
 #endif

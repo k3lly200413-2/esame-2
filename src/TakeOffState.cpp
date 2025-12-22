@@ -105,3 +105,8 @@ GenericState* TakeOffState::update()
 
 void TakeOffState::exitState()
 {}
+
+GenericState *TakeOffState::clone()
+{
+    return new TakeOffState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
+}

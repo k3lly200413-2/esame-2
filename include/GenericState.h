@@ -97,6 +97,9 @@ class GenericState
         virtual GenericState* update() = 0;
         
         virtual void exitState() = 0;
+
+        virtual GenericState* clone() = 0;
+        
 };
 
 #endif

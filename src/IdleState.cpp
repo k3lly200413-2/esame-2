@@ -46,7 +46,7 @@ GenericState* IdleState::update()
     Serial.println(getAlarmState());
     if (preAlarmStateCheck() || getAlarmState())
     {
-        return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta, this);
+        return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta, this->clone());
         /* Don't Start new Flight */
     }
     // return NULL;
@@ -57,4 +57,9 @@ GenericState* IdleState::update()
 void IdleState::exitState()
 {
     Serial.println("Exited Idle State");
+}
+
+GenericState *IdleState::clone()
+{
+    return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
 }

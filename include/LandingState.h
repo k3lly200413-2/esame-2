@@ -32,6 +32,7 @@ public:
     bool canEmergencyStop() const override; 
     GenericState* update() override;
     void exitState() override;
+    GenericState* clone() override;
 };
 
 

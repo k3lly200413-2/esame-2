@@ -51,3 +51,8 @@ void DroneInsideState::exitState()
 {
     lcd.clear();
 }
+
+GenericState *DroneInsideState::clone()
+{
+    return new DroneInsideState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
+}

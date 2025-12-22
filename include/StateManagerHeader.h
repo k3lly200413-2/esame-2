@@ -29,6 +29,7 @@ class StateManager {
     void update();
 
     void setState(GenericState* newState);
+
 };
 
 #endif

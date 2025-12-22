@@ -47,4 +47,9 @@ void FullAlarmState::exitState()
 GenericState* FullAlarmState::getPreviousState()
 {
     return this->previousState;
-} 
+}
+
+GenericState *FullAlarmState::clone()
+{
+    return new FullAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta, this);
+}

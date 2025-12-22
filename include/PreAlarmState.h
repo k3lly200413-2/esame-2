@@ -7,9 +7,10 @@ class PreAlarmState : public GenericState
 {
 private:
     int maxTemp2;
+    int maxTemp1;
     unsigned int initalTime;
     unsigned int T4;
-    GenericState* previousState;
+    GenericState* returnTicket;
 
 public:
     PreAlarmState(
@@ -22,7 +23,7 @@ public:
         int pirState,
         uint8_t analog_pin,
         float beta,
-        GenericState* previousState
+        GenericState* stateToReturnTo
     );
     ~PreAlarmState();
 
@@ -30,7 +31,7 @@ public:
     bool canEmergencyStop() const override; 
     GenericState* update() override;
     void exitState() override;
-
+    GenericState* clone() override;
 };
 
 #endif

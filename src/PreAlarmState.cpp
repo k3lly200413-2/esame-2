@@ -12,17 +12,21 @@ PreAlarmState::PreAlarmState(
     int pirState,
     uint8_t analog_pin,
     float beta,
-    GenericState* previousState
+    GenericState* stateToReturnTo
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
     maxTemp2 = 70;
+    maxTemp1 = 60;
     T4 = 3000;
-    this->previousState = previousState;
+    this->returnTicket = stateToReturnTo;
 }
 
 PreAlarmState::~PreAlarmState()
 {
+    if (returnTicket != NULL) {
+        delete returnTicket;
+    }
 }
 
 void PreAlarmState::enterState()
@@ -39,31 +43,48 @@ bool PreAlarmState::canEmergencyStop() const
 
 GenericState* PreAlarmState::update()
 {
+    float currentTemp = getTemp();
     Serial.print("Temp => ");
-    Serial.println(getTemp());
-    if (getTemp() < maxTemp2)
+    Serial.println(currentTemp);
+
+    // 1. IS IT SAFE?
+    if (currentTemp < maxTemp1)
     {
-        initalTime = 0;
+        initalTime = 0; // Reset timer just in case
+        
+        // --- THIS WAS MISSING ---
+        GenericState* temp = returnTicket;
+        setAlarmState(false);
+        returnTicket = NULL; // Prevent destructor from killing it
+        Serial.println("Temp is safe. Returning to previous state.");
+        return temp; 
+        // ------------------------
     }
-    else
+    // 2. IS IT DANGEROUS?
+    else if (currentTemp > maxTemp2)
     {
         if (initalTime == 0)
         {
             initalTime = millis();
         }
-        else
+        else if (millis() - initalTime >= T4)
         {
-            int elapsedTime = millis() - initalTime;
-            if (elapsedTime >= T4)
-            {
-                return new FullAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta, previousState);
-            }
+            // Time is up! Go to Full Alarm
+            GenericState* temp = returnTicket; 
+            returnTicket = NULL;
+            return new FullAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta, temp);
         }
     }
-    return NULL;
+
+    return NULL; // Stay in PreAlarm
 }
 
 void PreAlarmState::exitState()
 {
     Serial.println("Exiting PreAlarm State!");
+}
+
+GenericState *PreAlarmState::clone()
+{
+    return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta, this->clone());
 }
