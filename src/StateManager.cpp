@@ -21,11 +21,17 @@ void StateManager::init()
 void StateManager::update()
 {
   GenericState* nextState = currentState->update();
-  Serial.println("Update");
+  // Serial.println("Update");
   if (nextState != NULL)
   {
     setState(nextState);
   }
+
+  Serial.print("TEMP ");
+  Serial.println(currentState->getTemp());
+  Serial.print("DIST ");
+  Serial.println(currentState->getDistance());
+
 }
 
 void StateManager::setState(GenericState* newState)

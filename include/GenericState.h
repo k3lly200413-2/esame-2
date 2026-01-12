@@ -55,10 +55,6 @@ class GenericState
         //     }
         // }
 
-        unsigned long getDistance();
-
-        float getTemp();
-
         bool preAlarmStateCheck();
 
         void setAlarmState(bool newState);
@@ -99,6 +95,10 @@ class GenericState
         virtual void exitState() = 0;
 
         virtual GenericState* clone() = 0;
+
+        unsigned long getDistance();
+
+        float getTemp();
         
 };
 
