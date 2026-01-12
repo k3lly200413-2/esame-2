@@ -41,6 +41,43 @@ data_analog = [[], []]
 def change_val(arr, ind, val):
     arr[ind] = val
 
+def create_fsm_row(prefix, labels):
+    """
+    Creates a horizontal row of status lights.
+    prefix: A unique ID for this row (e.g., "temp_row")
+    labels: A list of strings (e.g., ["IDLE", "ACTIVE", "COOLING"])
+    """
+    with dpg.group(horizontal=True):
+        for i, label in enumerate(labels):
+            # Create a drawing canvas for each step
+            with dpg.drawlist(width=100, height=120):
+                # 1. Draw the Circle (The Light)
+                # We give it a unique tag: "prefix_indicator_0", "prefix_indicator_1", etc.
+                dpg.draw_circle((50, 50), 30, color=[50, 50, 50], fill=[50, 50, 50], 
+                                tag=f"{prefix}_indicator_{i}")
+                
+                # 2. Draw the Label
+                # Calculate text width approximation to center it (roughly)
+                text_offset = 50 - (len(label) * 3) 
+                dpg.draw_text((text_offset, 95), label, size=15)
+
+# --- HELPER: Update the lights ---
+def set_fsm_state(prefix, active_index, total_steps):
+    """
+    Updates the colors for a specific row.
+    prefix: The unique ID used during creation
+    active_index: The step number to light up (0, 1, 2...)
+    """
+    for i in range(total_steps):
+        tag = f"{prefix}_indicator_{i}"
+        
+        if i == active_index:
+            # ACTIVE: Bright Green
+            dpg.configure_item(tag, fill=[0, 255, 0], color=[0, 255, 0])
+        else:
+            # INACTIVE: Dim Grey
+            dpg.configure_item(tag, fill=[50, 50, 50], color=[50, 50, 50])
+
 with dpg.window(label="Temporary Test Window", width=690, height=560):
     
     # 1. Define the Red Theme
@@ -152,6 +189,36 @@ with dpg.window(label="Temporary Test Window", width=690, height=560):
     with dpg.item_handler_registry(tag="__demo_digital_plot_ref"):
         dpg.add_item_visible_handler(callback=_update_plot)
     dpg.bind_item_handler_registry("_demo_digital_plot", "__demo_digital_plot_ref")
+    
+    # --- ROW 1: TEMPERATURE FSM ---
+    dpg.add_text("Temperature Sequence", color=[255, 100, 100])
+    # Define steps for Row 1
+    temp_steps = ["COLD", "HEATING", "HOLDING", "COOLING"]
+    create_fsm_row("temp", temp_steps)
+    
+    dpg.add_separator()
+    dpg.add_spacer(height=20)
+
+    # --- ROW 2: DISTANCE FSM ---
+    dpg.add_text("Distance Sequence", color=[100, 100, 255])
+    # Define steps for Row 2
+    dist_steps = ["STOPPED", "MOVING", "ARRIVED"]
+    create_fsm_row("dist", dist_steps)
+    
+    dpg.add_separator()
+    
+    # --- CONTROLS (Simulating Arduino Input) ---
+    dpg.add_text("Simulation Controls:")
+    with dpg.group(horizontal=True):
+        dpg.add_slider_int(label="Temp Step", min_value=0, max_value=len(temp_steps)-1, 
+                           callback=lambda s, a: set_fsm_state("temp", a, len(temp_steps)))
+        
+        dpg.add_slider_int(label="Dist Step", min_value=0, max_value=len(dist_steps)-1, 
+                           callback=lambda s, a: set_fsm_state("dist", a, len(dist_steps)))
+
+# Initialize both to 0 (First state)
+set_fsm_state("temp", 0, len(temp_steps))
+set_fsm_state("dist", 0, len(dist_steps))
 
 dpg.show_viewport()
 dpg.start_dearpygui()
