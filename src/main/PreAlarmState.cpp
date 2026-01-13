@@ -33,7 +33,6 @@ void PreAlarmState::enterState()
 {
     clearScreen();
     writeOnDisplay(0, 0, "WE IN CRISIS");
-    Serial.println("Entered PreAlarm State!");
 }
 
 bool PreAlarmState::canEmergencyStop() const
@@ -44,9 +43,6 @@ bool PreAlarmState::canEmergencyStop() const
 GenericState* PreAlarmState::update()
 {
     float currentTemp = getTemp();
-    Serial.print("Temp => ");
-    Serial.println(currentTemp);
-
     // 1. IS IT SAFE?
     if (currentTemp < maxTemp1)
     {
@@ -56,7 +52,6 @@ GenericState* PreAlarmState::update()
         GenericState* temp = returnTicket;
         setAlarmState(false);
         returnTicket = NULL; // Prevent destructor from killing it
-        Serial.println("Temp is safe. Returning to previous state.");
         return temp; 
         // ------------------------
     }
@@ -81,7 +76,6 @@ GenericState* PreAlarmState::update()
 
 void PreAlarmState::exitState()
 {
-    Serial.println("Exiting PreAlarm State!");
 }
 
 GenericState *PreAlarmState::clone()

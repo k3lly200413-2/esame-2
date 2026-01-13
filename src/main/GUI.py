@@ -1,6 +1,7 @@
 import dearpygui.dearpygui as dpg
 import serial
 
+# TODO: Fix landing state
 
 def _hsv_to_rgb(h, s, v):
     if s == 0.0: return (v, v, v)
@@ -153,7 +154,7 @@ with dpg.window(label="Temporary Test Window", width=690, height=560):
                 
                 # Split "TEMP 100" into parts
                 parts = line_str.split()
-                
+                                
                 # We need exactly 2 parts: [Label, Value]
                 if len(parts) == 2:
                     label = parts[0]
@@ -170,6 +171,10 @@ with dpg.window(label="Temporary Test Window", width=690, height=560):
                             
                     except ValueError:
                         pass # Value part wasn't a number
+                else:
+                    # print(parts[0])
+                    
+                    checkLetter(parts[0])
             except Exception as e:
                 print(f"Serial Error: {e}")
 
@@ -200,7 +205,7 @@ with dpg.window(label="Temporary Test Window", width=690, height=560):
     # --- ROW 1: TEMPERATURE FSM ---
     dpg.add_text("Temperature Sequence", color=[255, 100, 100])
     # Define steps for Row 1
-    temp_steps = ["COLD", "HEATING", "HOLDING", "COOLING"]
+    temp_steps = ["NORMAL", "ALARM"]
     create_fsm_row("temp", temp_steps)
     
     dpg.add_separator()
@@ -209,19 +214,39 @@ with dpg.window(label="Temporary Test Window", width=690, height=560):
     # --- ROW 2: DISTANCE FSM ---
     dpg.add_text("Distance Sequence", color=[100, 100, 255])
     # Define steps for Row 2
-    dist_steps = ["STOPPED", "MOVING", "ARRIVED"]
+    dist_steps = ["REST", "TAKING OFF", "OPERATING", "LANDING"]
     create_fsm_row("dist", dist_steps)
     
     dpg.add_separator()
     
-    # --- CONTROLS (Simulating Arduino Input) ---
-    dpg.add_text("Simulation Controls:")
-    with dpg.group(horizontal=False):
-        dpg.add_slider_int(label="Temp Step", min_value=0, max_value=len(temp_steps)-1, 
-                           callback=lambda s, a: set_fsm_state("temp", a, len(temp_steps)))
+    """if arduino and arduino.in_waiting:
+        char = arduino.read().decode('utf-8').strip()"""
         
-        dpg.add_slider_int(label="Dist Step", min_value=0, max_value=len(dist_steps)-1, 
-                           callback=lambda s, a: set_fsm_state("dist", a, len(dist_steps)))
+        
+    """dpg.add_slider_int(label="Temp Step", min_value=0, max_value=len(temp_steps)-1, 
+                           callback=lambda s, a: set_fsm_state("dist", a, len(temp_steps)))"""
+                           
+def checkLetter(char):
+    if (char == 'R'):
+        set_fsm_state("dist", 0, 4)
+        return True
+    elif char == 'T':
+        set_fsm_state("dist", 1, 4)
+        return True
+    elif char == 'O':
+        print(char)
+        set_fsm_state("dist", 2, 4)
+        return True
+    elif char == 'L':
+        set_fsm_state("dist", 3, 4)
+        return True
+    elif char == 'N':
+        set_fsm_state("temp", 0, 2)
+        return True
+    elif char == 'A':
+        set_fsm_state("temp", 1, 2)
+        return True
+    return False
 
 # Initialize both to 0 (First state)
 set_fsm_state("temp", 0, len(temp_steps))

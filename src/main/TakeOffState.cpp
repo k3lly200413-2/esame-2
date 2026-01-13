@@ -42,6 +42,7 @@ void TakeOffState::enterState()
     clearScreen();
     openMotor();
     writeOnDisplay(0, 0, "TAKE OFF");
+    Serial.println('T');
 }
 
 bool TakeOffState::canEmergencyStop() const
@@ -95,7 +96,6 @@ GenericState* TakeOffState::update()
             {
                 closeMotor();
                 writeOnDisplay(0, 0, "DRONE OUT");
-                Serial.println(pirState);
                 return new FlyingState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta);
             }
         }

@@ -34,6 +34,7 @@ void LandingState::enterState()
     digitalWrite(pirOutPinUsed, LOW);
     writeOnDisplay(0, 0, "WE LANDING");
     lastBlinkTime = millis();
+    Serial.println('L');
 }
 
 bool LandingState::canEmergencyStop() const
@@ -43,7 +44,8 @@ bool LandingState::canEmergencyStop() const
 
 GenericState* LandingState::update()
 {
-    Serial.println("We in da loop");
+    Serial.print("DIST ");
+    Serial.println(getDistance());
     preAlarmStateCheck();
     if (millis() - lastBlinkTime >= 500) // 500ms = 0.5 seconds
     {
@@ -63,7 +65,6 @@ GenericState* LandingState::update()
     }
     else
     {
-        Serial.println("Distance is fine");
         if (initialTime == 0)
         {
             initialTime = millis();

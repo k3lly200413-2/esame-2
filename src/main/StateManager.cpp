@@ -29,8 +29,6 @@ void StateManager::update()
 
   Serial.print("TEMP ");
   Serial.println(currentState->getTemp());
-  Serial.print("DIST ");
-  Serial.println(currentState->getDistance());
 
 }
 

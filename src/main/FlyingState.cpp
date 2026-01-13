@@ -31,11 +31,10 @@ FlyingState::~FlyingState()
 
 void FlyingState::enterState()
 {
-    Serial.print("Pir Pin in Flying state => ");
-    Serial.print(pirPin);
     turnOffAllLeds();
     clearScreen();
     writeOnDisplay(0, 0, "ENTERED FLYING STATE");
+    Serial.println('O');
 }
 
 bool FlyingState::canEmergencyStop() const
@@ -45,9 +44,6 @@ bool FlyingState::canEmergencyStop() const
 
 GenericState* FlyingState::update()
 {
-
-    Serial.println("IN FLYING ABOUT TO CHECK WHAT TO DO");
-
     if (getAlarmState())
     {
         writeOnDisplay(0, 0, "NUH HUH");
@@ -56,8 +52,6 @@ GenericState* FlyingState::update()
     }
     int val = digitalRead(pirPin);
     
-    Serial.println(pirPin);
-
     if (val == HIGH)
     {        
         // Update internal state tracking
@@ -77,7 +71,6 @@ GenericState* FlyingState::update()
 
 void FlyingState::exitState()
 {
-    Serial.println("Exited Flying State");
 }
 
 GenericState* FlyingState::clone()

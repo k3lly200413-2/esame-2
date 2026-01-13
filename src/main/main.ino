@@ -54,13 +54,10 @@ void setup()
     }
 
     // 5. Initialize State Machine
-    Serial.print("PIR PIN => ");
-    Serial.print(pirOutPin);
     initialState = new IdleState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, pirOutPin, TEMP_PIN, BETA);
     stateManager = new StateManager(initialState);
     stateManager->init();
     
-    Serial.println("System Initialized. Waiting for PIR...");
 }
 
 void loop()

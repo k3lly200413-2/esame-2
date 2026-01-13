@@ -38,12 +38,11 @@ void DroneInsideState::enterState()
     changeLed(0);
     writeOnDisplay(0, 0, "DRONE INSIDE");
     closeMotor();
-    Serial.println("Entered Drone Inside State");
+    Serial.println('R');
 }
 
 GenericState* DroneInsideState::update()
 {
-    Serial.println("Inside");
     return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
 }
 

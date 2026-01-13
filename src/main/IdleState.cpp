@@ -33,6 +33,7 @@ void IdleState::enterState()
     changeLed(0);
     writeOnDisplay(0, 0, "DRONE INSIDE");
     closeMotor();
+    Serial.println('R');
 }
 
 bool IdleState::canEmergencyStop() const
@@ -42,8 +43,6 @@ bool IdleState::canEmergencyStop() const
 
 GenericState* IdleState::update()
 {
-    Serial.print("ALARMSTATE CHECK => ");
-    Serial.println(getAlarmState());
     if (preAlarmStateCheck() || getAlarmState())
     {
         return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta, this->clone());
@@ -61,7 +60,6 @@ GenericState* IdleState::update()
 
 void IdleState::exitState()
 {
-    Serial.println("Exited Idle State");
 }
 
 GenericState *IdleState::clone()

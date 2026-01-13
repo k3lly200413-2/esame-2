@@ -1,3 +1,4 @@
+#include "HardwareSerial.h"
 #include "GenericState.h"
 #include "PreAlarmState.h"
 #include <NewPing.h>
@@ -111,15 +112,15 @@ bool GenericState::preAlarmStateCheck()
         else
         {
             unsigned long elapsedTime = millis() - initalTime;
-            Serial.println(elapsedTime);
             if (elapsedTime >= T3)
             {
-                Serial.print("PreAlarmState => true");
                 setAlarmState(true);
+                Serial.println('A');
                 return true; /* new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);*/
             }
         }
     }
+    Serial.println('N');
     return false;
 }
 
