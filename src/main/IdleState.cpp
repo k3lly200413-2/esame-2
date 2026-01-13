@@ -49,8 +49,13 @@ GenericState* IdleState::update()
         return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta, this->clone());
         /* Don't Start new Flight */
     }
-    // return NULL;
-    return new TakeOffState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta);
+    else if (readChar() == 'T')
+    {
+        return new TakeOffState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta);
+    }
+
+    return nullptr;
+
     /* you can start new flight */
 }
 

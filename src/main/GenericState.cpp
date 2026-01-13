@@ -1,6 +1,6 @@
 #include "GenericState.h"
 #include "PreAlarmState.h"
-#include<NewPing.h>
+#include <NewPing.h>
 
 bool GenericState::alarmState = false;
 
@@ -136,4 +136,9 @@ bool GenericState::getAlarmState()
 void GenericState::clearScreen()
 {
     lcd.clear();
+}
+
+const char GenericState::readChar()
+{
+    return Serial.read();
 }

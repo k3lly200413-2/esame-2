@@ -61,7 +61,7 @@ GenericState* FlyingState::update()
     if (val == HIGH)
     {        
         // Update internal state tracking
-        if (pirState == LOW) 
+        if (pirState == LOW || readChar() == 'L') 
         {
             pirState = HIGH;
             return new LandingState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta);

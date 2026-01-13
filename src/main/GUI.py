@@ -13,12 +13,19 @@ def _hsv_to_rgb(h, s, v):
     if i == 4: return (255*t, 255*p, 255*v)
     if i == 5: return (255*v, 255*p, 255*q)
     
+def landCommand():
+    arduino.write(b'L')
+    print("Sent L")
+
+def takeOffCommand():
+    arduino.write(b'T')
+    print("Sent T")
 
 # main
 # --- 1. SETUP SERIAL ---
 try:
     # Ensure this matches your actual Arduino COM port
-    arduino = serial.Serial("COM3", 9600, timeout=.1)
+    arduino = serial.Serial("COM7", 9600, timeout=.1)
 except Exception as e:
     print(f"Warning: Could not connect to Arduino: {e}")
     arduino = None
@@ -106,11 +113,11 @@ with dpg.window(label="Temporary Test Window", width=690, height=560):
     with dpg.group(horizontal=True):
         
         # Button 1: RED
-        dpg.add_button(label="Click Red")
+        dpg.add_button(label="Click Red", callback=takeOffCommand)
         dpg.bind_item_theme(dpg.last_item(), "theme_red")
         
         # Button 2: BLUE
-        dpg.add_button(label="Click Blue")
+        dpg.add_button(label="Click Blue", callback=landCommand)
         dpg.bind_item_theme(dpg.last_item(), "theme_blue")
     
     # Checkboxes
@@ -209,7 +216,7 @@ with dpg.window(label="Temporary Test Window", width=690, height=560):
     
     # --- CONTROLS (Simulating Arduino Input) ---
     dpg.add_text("Simulation Controls:")
-    with dpg.group(horizontal=True):
+    with dpg.group(horizontal=False):
         dpg.add_slider_int(label="Temp Step", min_value=0, max_value=len(temp_steps)-1, 
                            callback=lambda s, a: set_fsm_state("temp", a, len(temp_steps)))
         
