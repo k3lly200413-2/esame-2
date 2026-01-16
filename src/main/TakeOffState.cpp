@@ -15,8 +15,9 @@ TakeOffState::TakeOffState(
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
     initialTime = 0;
-    T1 = 10000;
-    D1 = 30;
+    T1 = 10000;      // Time threshold: Drone must stay above D1 for 10 seconds
+    D1 = 30;         // Distance threshold: 30cm
+    
     lastBlinkTime = 0;
     isLedOn = false;
     pirPin = pirPinUsed;
@@ -27,75 +28,74 @@ TakeOffState::~TakeOffState()
 
 void TakeOffState::enterState()
 {
-    /*
-    Once we enter the Take Off State we need to:
-        Open the Servo
-        Write "TAKE OFF" on the LCD
-        Check if the distance of the drone is >= D1 for more than T1 Time
-        if it is:
-            Close Servo
-            Write "DRONE OUT" on the LCD
-        otherwise:
-            Do nothing I guess?
-    */
     turnOffAllLeds();   
     clearScreen();
+    
+    // Open the hangar door to allow exit
     openMotor();
+    
     writeOnDisplay(0, 0, "TAKE OFF");
+    
+    // Notify Python script: 'T' = Take Off Phase
     Serial.println('T');
 }
 
 bool TakeOffState::canEmergencyStop() const
 {
+    // Do not allow stops during critical take-off phase
     return false;
 }
 
 GenericState* TakeOffState::update()
 {
+    // Background safety check for temperature
     preAlarmStateCheck();
-    if (millis() - lastBlinkTime >= 500) // 500ms = 0.5 seconds
+
+    // --- NON-BLOCKING LED BLINK ---
+    // Toggle Yellow LED (Index 1) every 500ms
+    if (millis() - lastBlinkTime >= 500) 
     {
-        // 1. Update the timer
         lastBlinkTime = millis();
-                
-        // 3. Write to the LED (Using the first LED in your list)
         changeLed(1);
     }
 
+    // --- DISTANCE LOGIC ---
     unsigned long distance = getDistance();
-    // For Noise maybe
+
+    // Filter out sensor noise (0 usually means "out of range", >400 is unlikely)
     if (distance <= 0 || distance > 400) 
     {
-        return; 
+        return NULL; 
     }
 
-    // 1. Check if the condition is BROKEN (Drone is too low)
+    // Logic: The drone must be FAR away (Distance > D1) for a set time (T1) 
+    // to confirm it has successfully left the hangar.
+
     if (distance < D1)
     {
-        // Reset the timer flag because distance requirement isn't met
+        // Drone is still close/inside. Reset the timer.
         initialTime = 0;
     }
-    // 2. Condition IS met (Drone is high enough)
     else 
     {
-        // If the timer hasn't started yet, start it now
+        // Drone is far away (above threshold)
         if (initialTime == 0)
         {
+            // Start the timer
             initialTime = millis();
         }
-        // If the timer is already running, check how much time has passed
         else
         {
+            // Check how long it has been away
             unsigned long elapsedTime = millis() - initialTime;
             
-            // Serial.print("Elapsed Time => ");
-            // Serial.println(elapsedTime);
-
-            // Debugging (Note: String concat with numbers doesn't work well in C++)
             if (elapsedTime >= T1)
             {
+                // Confirmed: Drone has left.
                 closeMotor();
                 writeOnDisplay(0, 0, "DRONE OUT");
+                
+                // Transition to Flying State
                 return new FlyingState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta);
             }
         }

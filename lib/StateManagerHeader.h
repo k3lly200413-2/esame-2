@@ -18,6 +18,7 @@ class StateManager {
     int buttonPin;
     int tempSensorPin;
     int sonarPin;
+    unsigned long timing;
   
   public:
     StateManager(

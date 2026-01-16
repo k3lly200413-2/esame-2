@@ -100,7 +100,7 @@ class GenericState
 
         unsigned long getDistance();
 
-        float getTemp();
+        int getTemp();
         
 };
 

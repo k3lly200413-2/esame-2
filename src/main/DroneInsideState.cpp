@@ -33,11 +33,17 @@ DroneInsideState::~DroneInsideState()
 
 void DroneInsideState::enterState()
 {
+    // Clear screen from previous message
     clearScreen();
+    // Turn off all leds from before
     turnOffAllLeds();
+    // Turn on only the first 
     changeLed(0);
+    // Write on the display
     writeOnDisplay(0, 0, "DRONE INSIDE");
+    // Close the motor
     closeMotor();
+    // Serial.flush();
     Serial.println('R');
 }
 
