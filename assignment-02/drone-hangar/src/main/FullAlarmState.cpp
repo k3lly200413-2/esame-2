@@ -15,7 +15,7 @@ FullAlarmState::FullAlarmState(
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
-    // Store the previous state so we can resume operations later
+    // Store the previous state so we can return to it later
     this->previousState = previousState;
 }
 
@@ -26,51 +26,50 @@ FullAlarmState::~FullAlarmState()
 void FullAlarmState::enterState()
 {
     clearScreen();
-    
-    // Safety measures: shutdown motor and indicate Alarm status
     closeMotor();
     turnOffAllLeds();
-    changeLed(2); // Turn on Red LED (Index 2)
+    changeLed(2); // Turn on Red LED
     
     writeOnDisplay(0, 0, "ALARM");
     
-    // Notify Python script: 'A' = Alarm Active
+    // Notify Python script: 'A'larm
     Serial.println('A');
 }
 
 bool FullAlarmState::canEmergencyStop() const
 {
-    // Already in alarm/stopped state, so emergency stop is redundant or invalid
+    // Already in alarm/stopped state, so emergency stop is not applicable 
     return false;
 }
 
 GenericState *FullAlarmState::update()
 {
-    // Manual Reset: User must press the button to clear the alarm
+    // Manual Reset
     if (digitalRead(BUTTON_PIN) == HIGH)
     {
         setAlarmState(false);
-        // Restore the state the system was in before the alarm triggered
+        // Restore the previous state
         return this->previousState;
     }
+    // otherwise recheck
     return NULL;
 }
 
 void FullAlarmState::exitState()
 {
-    // Notify Python script: 'N' = Normal / Alarm Cleared
+    // We are in 'N'ormal State
     Serial.println('N');
 }
 
 GenericState* FullAlarmState::getPreviousState()
 {
-    // Utility to recover the stored state manually if needed
+    // get previous state
     setAlarmState(false);
     return this->previousState;
 }
 
 GenericState *FullAlarmState::clone()
 {
-    // Pass 'this' as the previous state to maintain history in the new clone
+    // pass this to allow previous state to work correctly
     return new FullAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta, this);
 }

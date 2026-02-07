@@ -14,8 +14,8 @@ LandingState::LandingState(
 )
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
-    D2 = 10;        // Distance threshold (cm) to confirm drone has landed
-    T2 = 4000;      // Time threshold (ms) drone must stay below D2 to be "Landed"
+    D2 = 10;        // Distance to confirm drone has landed
+    T2 = 4000;      // Time drone must stay below D2 to be "Landed"
     initialTime = 0;
     currentTime = 0;
     pirOutPinUsed = pirOutPin;
@@ -31,8 +31,6 @@ LandingState::~LandingState()
 void LandingState::enterState()
 {
     clearScreen();
-    
-    // Open the hanger for the drone
     openMotor();
     
     // Reset PIR output just in case
@@ -42,27 +40,28 @@ void LandingState::enterState()
     
     lastBlinkTime = millis();
     
-    // Notify Python script: 'L' = Landing Phase
+    // Notify Python script: 'L'anding
     Serial.println('L');
 }
 
 bool LandingState::canEmergencyStop() const
 {
-    // Do not allow stops during critical landing phase
+    // Cannot stop during emergency
     return false;
 }
 
 GenericState* LandingState::update()
 {
-    // Send Distance data to Python for plotting ("DIST 12")
+    // Send Distance data to Python for plotting
     Serial.print("DIST ");
     Serial.println(getDistance());
     
-    // Check for temperature alarm (background check)
+    // Check for temperature alarm
+    // if it's true it will be turned into a alarm state in idle state
+    // this will potentially set the alarm flag to true
     preAlarmStateCheck();
 
-    // --- NON-BLOCKING LED BLINK ---
-    // Toggle the yellow LED (Index 1) every 500ms
+    // Blinking
     if (millis() - lastBlinkTime >= 500) 
     {
         lastBlinkTime = millis();
@@ -70,8 +69,7 @@ GenericState* LandingState::update()
         changeLed(1);
     }
 
-    // --- LANDING CONFIRMATION LOGIC ---
-    // If distance is ABOVE threshold D2, the drone is not settled yet.
+    // if distance is >= D2 then don't start the timer to see if the drone is inside
     if (getDistance() >= D2)
     {
         // Reset the timer
@@ -79,7 +77,7 @@ GenericState* LandingState::update()
     }
     else
     {
-        // Drone is BELOW threshold (close to floor)
+        // Drone is close to the floor
         if (initialTime == 0)
         {
             // Start the timer
@@ -87,10 +85,10 @@ GenericState* LandingState::update()
         }
         else
         {
-            // Calculate how long it has been settled
+            // Calculate how long it has been 
             currentTime = millis() - initialTime;
             
-            // If settled for longer than T2 (4 seconds), confirm landing
+            // If close to the floor for longer than T2 seconds
             if (currentTime > T2)
             {
                 closeMotor();

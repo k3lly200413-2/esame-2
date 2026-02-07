@@ -30,7 +30,7 @@ void FlyingState::enterState()
     clearScreen();
     writeOnDisplay(0, 0, "DRONE OUT");
     
-    // Notify Python script that we are currently 'O'perating
+    // We are 'O'perating
     Serial.println('O');
 }
 
@@ -42,19 +42,20 @@ bool FlyingState::canEmergencyStop() const
 
 GenericState* FlyingState::update()
 {
-    // 1. Check for Critical Temperature Alarm
+    // if temperature is too high stop
     if (getAlarmState())
     {   
-        writeOnDisplay(0, 0, "NUH HUH"); // Placeholder text for alarm
+        // Placeholder text for future warning if needed
+        writeOnDisplay(0, 0, "Watch out!");
         
-        // Transition to PreAlarm, passing a clone of 'this' to remember previous state
+        // Transition to PreAlarm, passing clone to return to this state
         return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta, this->clone());
     }
 
     // 2. Check for Landing Conditions
     int val = digitalRead(pirPin);
 
-    // Only land if PIR detects a person AND the user sends the 'L' command
+    // If presence is detected and python sends Land command then land
     if (val == HIGH && readChar() == 'L')
     {        
         // Ensure state change only happens on the rising edge of the logic
@@ -78,6 +79,6 @@ void FlyingState::exitState()
 
 GenericState* FlyingState::clone()
 {
-    // Create a copy of the current state (Prototype Pattern)
+    // Create a clone of this state to allow to return to this state
     return new FlyingState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta);
 }

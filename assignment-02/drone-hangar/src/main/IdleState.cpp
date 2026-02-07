@@ -28,17 +28,13 @@ IdleState::~IdleState()
 void IdleState::enterState()
 {
     clearScreen();
-    
-    // Set visual indicators: Green LED (Index 0) on, others off
     turnOffAllLeds();
     changeLed(0);
     
     writeOnDisplay(0, 0, "DRONE INSIDE");
-    
-    // Ensure the hanger door is closed for safety
     closeMotor();
     
-    // Notify Python script: 'R' = Rest / Ready / Idle
+    // We are at 'R'est
     Serial.println('R');
 }
 
@@ -50,17 +46,16 @@ bool IdleState::canEmergencyStop() const
 
 GenericState* IdleState::update()
 {
-    // 1. Check for Overheating (Pre-Alarm)
+    // Check for Overheating
     if (preAlarmStateCheck() || getAlarmState())
     {
-        // Transition to PreAlarm, saving 'this' state to return to later
+        // Transition to PreAlarm
         return new PreAlarmState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta, this->clone());
     }
     
-    // 2. Check for Take Off Command
+    // Check for Take Off
     else if (readChar() == 'T')
     {
-        // Received 'T' from Python/User -> Start Take Off Sequence
         return new TakeOffState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirPin, analog_pin, beta);
     }
 
@@ -73,6 +68,5 @@ void IdleState::exitState()
 
 GenericState *IdleState::clone()
 {
-    // Create a fresh instance of IdleState for state restoration
     return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
 }

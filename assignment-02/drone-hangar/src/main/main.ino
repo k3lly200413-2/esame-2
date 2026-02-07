@@ -8,58 +8,60 @@
 #include "IdleState.h"
 #include "StateManagerHeader.h" 
 
-// --- PIN DEFINITIONS ---
+// PIN Definitions
 #define I2C_ADDRESS 0x27
 #define PIN_TRIG 8
 #define PIN_ECHO 7
 #define SERVO_PIN 3 
 #define TEMP_PIN 13
+#define PIR_OUT_PIN 12
+#define BUTTON_PIN 9
 
-const int pirOutPin = 12; 
-const int buttonPin = 9;  
-
-// LEDs on Pins 4, 5, 6
 int ledPins[] = { 4, 5, 6 };
 
 const float BETA = 3950;
 
-// --- GLOBAL OBJECTS ---
+// Static memory allocation to avoid allocating new memory and delete meory every state change
+// this is to avoid heap fragmentation
+
 Servo myServo;
 LiquidCrystal_I2C lcd(I2C_ADDRESS, 16, 2);
 NewPing sonar(PIN_TRIG, PIN_ECHO);
+
+// Pointer definition to states to be used throughout main file
 
 GenericState* initialState;
 StateManager* stateManager;
 
 void setup()
 {
+    // Setting up needed controlled elements
+
     Serial.begin(9600);
     
-    // 1. Initialize Display
+    // Display
     lcd.init();
     lcd.backlight();
 
-    // 2. Initialize Servo
+    // Servo
     myServo.attach(SERVO_PIN);
 
-    // 3. Initialize Sensors & Inputs
-    pinMode(pirOutPin, INPUT); 
-    pinMode(buttonPin, INPUT); 
+    // Sensors
+    pinMode(PIR_OUT_PIN, INPUT); 
+    pinMode(PIR_OUT_PIN, INPUT); 
 
-    // 4. Initialize LEDs
+    // LEDs
     for (int i = 0; i < 3; i++) {
         pinMode(ledPins[i], OUTPUT);
     }
 
-    // 5. Initialize State Machine
-    // Start in IdleState (Drone Inside)
-    initialState = new IdleState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, pirOutPin, TEMP_PIN, BETA);
+    // State Machine
+    initialState = new IdleState(ledPins, myServo, lcd, PIN_ECHO, PIN_TRIG, sonar, PIR_OUT_PIN, TEMP_PIN, BETA);
     stateManager = new StateManager(initialState);
     stateManager->init();
 }
 
 void loop()
 {
-    // Continuous update of the active state
     stateManager->update();
 }

@@ -17,17 +17,17 @@ PreAlarmState::PreAlarmState(
 : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
     // Temperature Thresholds
-    maxTemp2 = 70; // Critical threshold (triggers Full Alarm)
-    maxTemp1 = 60; // Safe threshold (returns to Previous State)
+    maxTemp2 = 70; // Critical level
+    maxTemp1 = 60; // Uh Oh level
     T4 = 3000;     // Duration temp must remain critical before triggering alarm
     
-    // Save the state we came from (e.g., Idle or Flying) so we can return to it later
+    // Save previous state so we can return to it 
     this->returnTicket = stateToReturnTo;
 }
 
 PreAlarmState::~PreAlarmState()
 {
-    // Safety check: If we are destroyed without returning the ticket, delete it to prevent leaks.
+    // memory leak prevention
     if (returnTicket != NULL) {
         delete returnTicket;
     }
@@ -35,7 +35,6 @@ PreAlarmState::~PreAlarmState()
 
 void PreAlarmState::enterState()
 {
-    // Pre-Alarm usually runs silently in the background or maintains previous visuals
 }
 
 bool PreAlarmState::canEmergencyStop() const
@@ -48,12 +47,12 @@ GenericState* PreAlarmState::update()
 {
     float currentTemp = getTemp();
 
-    // Condition 1: Temperature has dropped back to Safe Levels (< 60)
+    // if level is less than Uh Oh level then cool
     if (currentTemp < maxTemp1)
     {
-        initalTime = 0; // Reset timer
+        initalTime = 0;
         
-        // Retrieve the stored previous state
+        // get the previous state
         GenericState* temp = returnTicket;
         
         // Reset flag to allow normal operations
@@ -66,20 +65,17 @@ GenericState* PreAlarmState::update()
         return temp; 
     }
     
-    // Condition 2: Temperature is Critical (> 70)
+    // if temperature is more than critical 
     else if (currentTemp > maxTemp2)
     {
         if (initalTime == 0)
         {
-            // Start hysteresis timer
             initalTime = millis();
         }
         else if (millis() - initalTime >= T4)
         {
-            // Timer expired: Escalate to Full Alarm
-            
-            // Pass the original state (returnTicket) forward to the Full Alarm
-            // so we can eventually go back to it after the alarm is cleared.
+            // Full Alarm
+
             GenericState* temp = returnTicket; 
             returnTicket = NULL; // Detach pointer
             
@@ -87,7 +83,7 @@ GenericState* PreAlarmState::update()
         }
     }
 
-    // If neither condition is met (Temperature between 60-70), stay in PreAlarm (Return NULL)
+    // If nothing stay in state
     return NULL; 
 }
 

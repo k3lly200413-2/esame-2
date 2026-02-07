@@ -1,9 +1,7 @@
-// #include "HardwareSerial.h"
 #include "GenericState.h"
 #include "PreAlarmState.h"
 #include <NewPing.h>
 #include "DHT11.h"
-// #include "Test.h"
 
 // Initialize static member
 bool GenericState::alarmState = false;
@@ -39,7 +37,7 @@ bool GenericState::canEmergencyStop() const
 /**
  * Writes text to the LCD with automatic line wrapping.
  * If text exceeds the first line (16 chars), it jumps to the second line.
- * * @param cursorX Starting X position
+ * @param cursorX Starting X position
  * @param cursorY Starting Y position
  * @param text The string to display
  */
@@ -118,7 +116,7 @@ void GenericState::turnOffAllLeds()
 
 /**
  * Gets distance from ultrasonic sensor.
- * Includes a mandatory 50ms delay to prevent signal interference.
+ * Includes delay to prevent signal interference.
  */
 unsigned long GenericState::getDistance()
 {

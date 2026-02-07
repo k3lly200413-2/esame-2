@@ -22,7 +22,7 @@ DroneInsideState::DroneInsideState(
 )
 
     // : is a list of constructors, used to construct the variables before the constructor of the class in question
-    // lcd is a pointer, because of this we need to pass an initialised version of the class ( I think ) so we need to understand when we need to initialise the first pointer to the liquidcristali2c class
+    // lcd is a pointer, because of this we need to pass an initialised version of the class ( I think ) so I need to understand when I need to initialise the first pointer to the liquidcristali2c class
     : GenericState(leds, servo, lcd, pin_echo, pin_trig, sonarUsed, pirState, analog_pin, beta)
 {
 }
@@ -33,7 +33,7 @@ DroneInsideState::~DroneInsideState()
 
 void DroneInsideState::enterState()
 {
-    // Clear screen from previous message
+    // Clear screen
     clearScreen();
     // Turn off all leds from before
     turnOffAllLeds();
@@ -49,6 +49,7 @@ void DroneInsideState::enterState()
 
 GenericState* DroneInsideState::update()
 {
+    // Straight away set it to IDLE State
     return new IdleState(ledPins, servoUsed, lcd, echo_pin, trig_pin, sonar, pirState, analog_pin, beta);
 }
 
